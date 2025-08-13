@@ -93,6 +93,10 @@ local fzf_wrap = vim.fn['fzf#wrap']
 
 local wrapped = fzf_wrap({
   source = items,
+   window = {
+   width = 0.5,
+   height = 0.4,
+ },
   options = '--multi'
 })
 
