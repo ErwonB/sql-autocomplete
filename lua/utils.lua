@@ -6,6 +6,7 @@ function M.get_databases()
   local handle = io.popen(command)
   local result = handle:read('*a')
   handle:close()
+  result = string.gsub(result, "\n", "")
 
   -- Parse the result and return a list of columns
   local databases = {}
@@ -21,6 +22,7 @@ function M.get_tables(database)
   local handle = io.popen(command)
   local result = handle:read('*a')
   handle:close()
+  result = string.gsub(result, "\n", "")
 
   -- Parse the result and return a list of tables
   local tables = {}
@@ -36,6 +38,7 @@ function M.get_columns(database, tablename)
   local handle = io.popen(command)
   local result = handle:read('*a')
   handle:close()
+  result = string.gsub(result, "\n", "")
 
   -- Parse the result and return a list of columns
   local columns = {}
