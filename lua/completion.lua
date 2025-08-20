@@ -19,7 +19,7 @@ local function get_text_before_cursor()
         if current_line == "" or current_line:match(";") then
             break
         end
-        table.insert(text_before, string.lower(current_line))
+        table.insert(text_before, 1, string.lower(current_line))
     end
 
     -- Join the collected lines in reverse order
@@ -50,6 +50,7 @@ local function get_text_after_cursor()
 end
 
 -- Function to be used as `completefunc`
+-- TODO : handling alias for tablename
 function M.complete_func(findstart)
     if findstart == 1 then
         -- Return the start position of the word to be completed
@@ -62,50 +63,66 @@ function M.complete_func(findstart)
         return col
     else
         -- Return the list of completion items
-        -- local cursor_pos = vim.api.nvim_win_get_cursor(0)
-        -- local line = vim.api.nvim_get_current_line()
-        -- local before_cursor = string.lower(line:sub(1, cursor_pos[2]))
-        -- local after_cursor = string.lower(line:sub(cursor_pos[2] + 1))
         local before_cursor = get_text_before_cursor()
         local after_cursor = get_text_after_cursor()
 
-        -- print("Text before cursor: " .. text_before)
-        -- print("Text after cursor: " .. text_after)
+        -- print("Text before cursor: " .. before_cursor)
+        -- print("Text after cursor: " .. after_cursor)
+
+        local patterns = {
+            'from%s+([%w_]+)%.',
+            'join%s+([%w_]+)%.',
+            'show%s+table%s+([%w_]+)%.',
+            'show%s+view%s+([%w_]+)%.',
+            'show%s+macro%s+([%w_]+)%.'
+        }
+
+        local db_name = nil
+        local max_start = 0
+        for _, pat in ipairs(patterns) do
+            local start, _, cap = before_cursor:find(pat)
+            if start and start > max_start then
+                max_start = start
+                db_name = cap
+            end
+        end
+
+        -- Detect if we're between "select" and "from"
+        local res_tuple_dbname_tbname = {}
+        local select_from_pattern = 'select'
+        local select_table_pattern = 'from%s+([%w_]+)%.([%w_]+)'
+        local select_join_pattern = 'join%s+([%w_]+)%.([%w_]+)'
+        local search_db_tb = after_cursor
+        local contains_select = before_cursor:match(select_from_pattern)
+        -- Detect if we're after where (retrieve database + tablename from before_cursor
+        local contains_where = before_cursor:match("where")
+        if (contains_where) then
+            search_db_tb = before_cursor
+        end
+
+        local db, tb = search_db_tb:match(select_table_pattern)
+        if db and tb then
+            table.insert(res_tuple_dbname_tbname, { db_name = string.upper(db), tb_name = string.upper(tb) })
+        end
 
 
-        -- Detect if we're after "select * from db1."
-        local db_from_pattern = 'from%s+([%w_]+)%.$'
-        local db_join_pattern = 'join%s+([%w_]+)%.$'
-        local db_show_table = 'show%s+table%s+([%w_]+)%.$'
-        local db_show_view = 'show%s+view%s+([%w_]+)%.$'
-        local db_show_macro = 'show%s+macro%s+([%w_]+)%.$'
-        local db_name = before_cursor:match(db_from_pattern) or before_cursor:match(db_join_pattern) or
-            before_cursor:match(db_show_table) or before_cursor:match(db_show_view) or before_cursor:match(db_show_macro)
+        for l_db, l_tb in search_db_tb:gmatch(select_join_pattern) do
+            if l_db and l_tb then
+                table.insert(res_tuple_dbname_tbname, { db_name = string.upper(l_db), tb_name = string.upper(l_tb) })
+            end
+        end
 
-        if db_name then
-            -- Fetch tables for the database
+        -- print(vim.inspect(res_tuple_dbname_tbname))
+
+        if (contains_select or contains_where) and next(res_tuple_dbname_tbname) then
+            local columns = utils.get_columns(res_tuple_dbname_tbname)
+            return columns
+        elseif db_name then
             local tables = utils.get_tables(string.upper(db_name))
             return tables
         else
-            -- Detect if we're between "select" and "from"
-            local select_from_pattern = 'select'
-            local select_table_pattern = 'from%s+([%w_]+)%.([%w_]+)'
-            local contains_select = before_cursor:match(select_from_pattern)
-            local dbname, tbname = after_cursor:match(select_table_pattern)
-
-            -- Detect if we're after where (retrieve database + tablename from before_cursor
-            local contains_where = before_cursor:match("where")
-            if (contains_where) then
-                dbname, tbname = before_cursor:match(select_table_pattern)
-            end
-
-            if (contains_select or contains_where) and dbname and tbname then
-                local columns = utils.get_columns(string.upper(dbname), string.upper(tbname))
-                return columns
-            else
-                local databases = utils.get_databases()
-                return databases
-            end
+            local databases = utils.get_databases()
+            return databases
         end
         return {}
     end

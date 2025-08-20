@@ -33,9 +33,13 @@ function M.get_tables(database)
 end
 
 -- Query columns in a table
-function M.get_columns(database, tablename)
-    local command = string.format('%s --path %s --db %s --tb %s', vim.g.autocompletels, vim.g.autocompletels_data,
-        database, tablename)
+function M.get_columns(table_db_tb)
+    local command = ""
+    for _, item in ipairs(table_db_tb) do
+        command = command .. "--db " .. item.db_name .. " --tb " .. item.tb_name .. " "
+    end
+
+    command = string.format('%s --path %s %s', vim.g.autocompletels, vim.g.autocompletels_data, command)
     local handle = io.popen(command)
     local result = handle:read('*a')
     handle:close()
