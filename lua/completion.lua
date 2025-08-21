@@ -129,13 +129,13 @@ function M.complete_func(findstart)
                 end
             end
             local columns = utils.get_columns(res_tuple_dbname_tbname)
-            return columns, a
+            return columns, "--multi", a, contains_where
         elseif db_name then
             local tables = utils.get_tables(string.upper(db_name))
-            return tables
+            return tables, ""
         else
             local databases = utils.get_databases()
-            return databases
+            return databases, ""
         end
         return {}
     end
@@ -168,12 +168,11 @@ end
 
 -- Function to trigger fzf with the completion items
 function M.trigger_fzf()
-    local items, alias = M.complete_func(0)
-    if not alias or alias == "" then
-        alias = ""
-    else
-        alias = alias .. "."
-    end
+    local items, fzf_option, alias, where = M.complete_func(0)
+
+    alias = (alias and alias ~= "") and (alias .. ".") or ""
+    local sep = where and " and " or ", "
+
 
     -- get info for current buffer
     local buf = vim.api.nvim_get_current_buf()
@@ -190,7 +189,7 @@ function M.trigger_fzf()
             width = 0.5,
             height = 0.4,
         },
-        options = '--multi',
+        options = fzf_option,
     })
 
 
@@ -208,7 +207,7 @@ function M.trigger_fzf()
 
         local final_result
         if #result > 1 then
-            final_result = table.concat(result, ", " .. alias)
+            final_result = table.concat(result, sep .. alias)
         else
             final_result = result[1]
         end
