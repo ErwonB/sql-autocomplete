@@ -50,6 +50,7 @@ local function get_text_after_cursor()
 end
 
 -- Function to be used as `completefunc`
+-- TODO : handling alias for tablename
 function M.complete_func(findstart)
     if findstart == 1 then
         -- Return the start position of the word to be completed
@@ -118,8 +119,9 @@ function M.complete_func(findstart)
         -- print(vim.inspect(res_tuple_dbname_tbname))
 
         if (contains_select or contains_where) and next(res_tuple_dbname_tbname) then
+            local a
             if contains_select then --check if there is an alias and match only for it in the resule sent to the function
-                local a = before_cursor:match(".*%s+([%w_]+)%.$")
+                a = before_cursor:match(".*%s+([%w_]+)%.$")
                 if a then
                     res_tuple_dbname_tbname = vim.tbl_filter(function(item)
                         return item.alias == string.upper(a)
@@ -127,7 +129,7 @@ function M.complete_func(findstart)
                 end
             end
             local columns = utils.get_columns(res_tuple_dbname_tbname)
-            return columns
+            return columns, a
         elseif db_name then
             local tables = utils.get_tables(string.upper(db_name))
             return tables
@@ -166,7 +168,12 @@ end
 
 -- Function to trigger fzf with the completion items
 function M.trigger_fzf()
-    local items = M.complete_func(0)
+    local items, alias = M.complete_func(0)
+    if not alias or alias == "" then
+        alias = ""
+    else
+        alias = alias .. "."
+    end
 
     -- get info for current buffer
     local buf = vim.api.nvim_get_current_buf()
@@ -201,7 +208,7 @@ function M.trigger_fzf()
 
         local final_result
         if #result > 1 then
-            final_result = table.concat(result, ", ")
+            final_result = table.concat(result, ", " .. alias)
         else
             final_result = result[1]
         end
