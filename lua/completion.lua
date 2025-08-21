@@ -50,7 +50,6 @@ local function get_text_after_cursor()
 end
 
 -- Function to be used as `completefunc`
--- TODO : handling alias for tablename
 function M.complete_func(findstart)
     if findstart == 1 then
         -- Return the start position of the word to be completed
@@ -70,8 +69,10 @@ function M.complete_func(findstart)
         -- print("Text after cursor: " .. after_cursor)
 
         local patterns = {
-            'from%s+([%w_]+)%.',
-            'join%s+([%w_]+)%.',
+            'from%s*([%w_]+)%.',
+            'from',
+            'join%s*([%w_]+)%.',
+            'join',
             'show%s+table%s+([%w_]+)%.',
             'show%s+view%s+([%w_]+)%.',
             'show%s+macro%s+([%w_]+)%.'
@@ -90,8 +91,8 @@ function M.complete_func(findstart)
         -- Detect if we're between "select" and "from"
         local res_tuple_dbname_tbname = {}
         local select_from_pattern = 'select'
-        local select_table_pattern = 'from%s+([%w_]+)%.([%w_]+)'
-        local select_join_pattern = 'join%s+([%w_]+)%.([%w_]+)'
+        local select_table_pattern = 'from%s+([%w_]+)%.([%w_]+)%s*([%w_]*)'
+        local select_join_pattern = 'join%s+([%w_]+)%.([%w_]+)%s*([%w_]*)'
         local search_db_tb = after_cursor
         local contains_select = before_cursor:match(select_from_pattern)
         -- Detect if we're after where (retrieve database + tablename from before_cursor
@@ -100,21 +101,31 @@ function M.complete_func(findstart)
             search_db_tb = before_cursor
         end
 
-        local db, tb = search_db_tb:match(select_table_pattern)
+        local db, tb, alias = search_db_tb:match(select_table_pattern)
         if db and tb then
-            table.insert(res_tuple_dbname_tbname, { db_name = string.upper(db), tb_name = string.upper(tb) })
+            table.insert(res_tuple_dbname_tbname,
+                { db_name = string.upper(db), tb_name = string.upper(tb), alias = string.upper(alias) })
         end
 
 
-        for l_db, l_tb in search_db_tb:gmatch(select_join_pattern) do
+        for l_db, l_tb, l_alias in search_db_tb:gmatch(select_join_pattern) do
             if l_db and l_tb then
-                table.insert(res_tuple_dbname_tbname, { db_name = string.upper(l_db), tb_name = string.upper(l_tb) })
+                table.insert(res_tuple_dbname_tbname,
+                    { db_name = string.upper(l_db), tb_name = string.upper(l_tb), alias = string.upper(l_alias) })
             end
         end
 
         -- print(vim.inspect(res_tuple_dbname_tbname))
 
         if (contains_select or contains_where) and next(res_tuple_dbname_tbname) then
+            if contains_select then --check if there is an alias and match only for it in the resule sent to the function
+                local a = before_cursor:match(".*%s+([%w_]+)%.$")
+                if a then
+                    res_tuple_dbname_tbname = vim.tbl_filter(function(item)
+                        return item.alias == string.upper(a)
+                    end, res_tuple_dbname_tbname)
+                end
+            end
             local columns = utils.get_columns(res_tuple_dbname_tbname)
             return columns
         elseif db_name then
