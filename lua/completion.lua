@@ -31,11 +31,11 @@ local function get_text_after_cursor()
     local cursor = vim.api.nvim_win_get_cursor(0)
     local line = cursor[1]
     local col = cursor[2]
-    local text_after = ""
 
     -- Add the text from the current line after the cursor
+    local lines_after = {}
     local current_line = vim.api.nvim_get_current_line()
-    text_after = text_after .. " " .. current_line:sub(col + 1)
+    table.insert(lines_after, current_line:sub(col + 1))
 
     while line < vim.api.nvim_buf_line_count(0) and not current_line:match(";") do
         line = line + 1
@@ -43,101 +43,147 @@ local function get_text_after_cursor()
         if current_line == "" or current_line:match(";") then
             break
         end
-        text_after = text_after .. " " .. current_line
+        table.insert(lines_after, current_line)
     end
 
-    return string.lower(text_after:match("^%s*(.-)%s*$"))
+    local result_string = table.concat(lines_after, " ")
+    return string.lower(result_string:match("^%s*(.-)%s*$") or "")
 end
 
--- Function to be used as `completefunc`
--- TODO : handling alias for tablename
-function M.complete_func(findstart)
+local function analyze_sql_context(before_cursor, after_cursor)
+    local context = {}
+
+    -- Pattern to find tables/views from 'from' and 'join' clauses, capturing db, table, and alias
+    local table_clause_pattern = '[(from|join)]%s+([%w_]+)%.([%w_]+)%s*([%w_]*)'
+    -- local table_clause_pattern1 = 'from%s+([%w_]+)%.([%w_]+)%s*([%w_]*)'
+    -- local table_clause_pattern2 = 'join%s+([%w_]+)%.([%w_]+)%s*([%w_]*)'
+
+    local contains_select = before_cursor:match('select')
+    local contains_where = before_cursor:match('where')
+
+    local search_text = contains_where and before_cursor or after_cursor
+
+    -- Check for column completion context (between SELECT and FROM, or after WHERE)
+    if contains_select or contains_where then
+        context.tables = {}
+        -- for db, tbl, alias in search_text:gmatch(table_clause_pattern1) .. search_text:gmatch(table_clause_pattern2) do
+        for db, tbl, alias in search_text:gmatch(table_clause_pattern) do
+            table.insert(context.tables, {
+                db_name = string.upper(db),
+                tb_name = string.upper(tbl),
+                alias = string.upper(alias or ""),
+            })
+        end
+
+        if #context.tables > 0 then
+            context.type = 'columns'
+            context.is_where = contains_where
+            context.alias_prefix = before_cursor:match(".*%s+([%w_]+)%.$")
+            return context
+        end
+    end
+
+    local db_patterns = {
+        'from%s+([%w_]+)%.',
+        'from',
+        'join%s*([%w_]+)%.',
+        'join',
+        'show%s+table%s+([%w_]+)%.',
+        'show%s+view%s+([%w_]+)%.',
+        'show%s+macro%s+([%w_]+)%.'
+    }
+
+    local db_name = nil
+    local max_start = 0
+    for _, pat in ipairs(db_patterns) do
+        local start, _, cap = before_cursor:find(pat)
+        if start and start > max_start then
+            max_start = start
+            db_name = cap
+        end
+    end
+
+    if db_name then
+        context.type = 'tables'
+        context.db_name = string.upper(db_name)
+        return context
+    end
+
+    context.type = 'databases'
+    return context
+end
+
+function M.complete_manual(findstart)
     if findstart == 1 then
-        -- Return the start position of the word to be completed
         local line = vim.api.nvim_get_current_line()
-        local cursor_pos = vim.api.nvim_win_get_cursor(0)
-        local col = cursor_pos[2]
+        local col = vim.api.nvim_win_get_cursor(0)[2]
         while col > 0 and line:sub(col, col):match('%w') do
             col = col - 1
         end
         return col
     else
-        -- Return the list of completion items
         local before_cursor = get_text_before_cursor()
         local after_cursor = get_text_after_cursor()
+        local context = analyze_sql_context(before_cursor, after_cursor)
 
-        -- print("Text before cursor: " .. before_cursor)
-        -- print("Text after cursor: " .. after_cursor)
+        local items = {}
+        local fzf_options = ""
 
-        local patterns = {
-            'from%s*([%w_]+)%.',
-            'from',
-            'join%s*([%w_]+)%.',
-            'join',
-            'show%s+table%s+([%w_]+)%.',
-            'show%s+view%s+([%w_]+)%.',
-            'show%s+macro%s+([%w_]+)%.'
+        if context.type == 'columns' then
+            if context.alias_prefix then
+                context.tables = vim.tbl_filter(function(item)
+                    return item.alias == string.upper(context.alias_prefix)
+                end, context.tables)
+            end
+            items = utils.get_columns(context.tables)
+            fzf_options = "--multi"
+        elseif context.type == 'tables' then
+            items = utils.get_tables(context.db_name)
+        elseif context.type == 'databases' then
+            items = utils.get_databases()
+        end
+
+        return {
+            items = items,
+            fzf_options = fzf_options,
+            context = context,
         }
+    end
+end
 
-        local db_name = nil
-        local max_start = 0
-        for _, pat in ipairs(patterns) do
-            local start, _, cap = before_cursor:find(pat)
-            if start and start > max_start then
-                max_start = start
-                db_name = cap
+function M.complete_func(findstart, base)
+    if findstart == 1 then
+        local line = vim.api.nvim_get_current_line()
+        local col = vim.api.nvim_win_get_cursor(0)[2]
+        while col > 0 and line:sub(col, col):match('%w') do
+            col = col - 1
+        end
+        return col
+    else
+        local before_cursor = get_text_before_cursor()
+        local after_cursor = get_text_after_cursor()
+        local context = analyze_sql_context(before_cursor, after_cursor)
+
+        local items = {}
+
+        if context.type == 'columns' then
+            if context.alias_prefix then
+                context.tables = vim.tbl_filter(function(item)
+                    return item.alias == string.upper(context.alias_prefix)
+                end, context.tables)
             end
+            items = utils.get_columns(context.tables)
+        elseif context.type == 'tables' then
+            items = utils.get_tables(context.db_name)
+        elseif context.type == 'databases' then
+            items = utils.get_databases()
         end
 
-        -- Detect if we're between "select" and "from"
-        local res_tuple_dbname_tbname = {}
-        local select_from_pattern = 'select'
-        local select_table_pattern = 'from%s+([%w_]+)%.([%w_]+)%s*([%w_]*)'
-        local select_join_pattern = 'join%s+([%w_]+)%.([%w_]+)%s*([%w_]*)'
-        local search_db_tb = after_cursor
-        local contains_select = before_cursor:match(select_from_pattern)
-        -- Detect if we're after where (retrieve database + tablename from before_cursor
-        local contains_where = before_cursor:match("where")
-        if (contains_where) then
-            search_db_tb = before_cursor
-        end
+        local filtered_items = vim.tbl_filter(function(item)
+            return vim.startswith(string.lower(item), string.lower(base))
+        end, items)
 
-        local db, tb, alias = search_db_tb:match(select_table_pattern)
-        if db and tb then
-            table.insert(res_tuple_dbname_tbname,
-                { db_name = string.upper(db), tb_name = string.upper(tb), alias = string.upper(alias) })
-        end
-
-
-        for l_db, l_tb, l_alias in search_db_tb:gmatch(select_join_pattern) do
-            if l_db and l_tb then
-                table.insert(res_tuple_dbname_tbname,
-                    { db_name = string.upper(l_db), tb_name = string.upper(l_tb), alias = string.upper(l_alias) })
-            end
-        end
-
-        -- print(vim.inspect(res_tuple_dbname_tbname))
-
-        if (contains_select or contains_where) and next(res_tuple_dbname_tbname) then
-            local a
-            if contains_select then --check if there is an alias and match only for it in the resule sent to the function
-                a = before_cursor:match(".*%s+([%w_]+)%.$")
-                if a then
-                    res_tuple_dbname_tbname = vim.tbl_filter(function(item)
-                        return item.alias == string.upper(a)
-                    end, res_tuple_dbname_tbname)
-                end
-            end
-            local columns = utils.get_columns(res_tuple_dbname_tbname)
-            return columns, "--multi", a, contains_where
-        elseif db_name then
-            local tables = utils.get_tables(string.upper(db_name))
-            return tables, ""
-        else
-            local databases = utils.get_databases()
-            return databases, ""
-        end
-        return {}
+        return filtered_items
     end
 end
 
@@ -151,72 +197,64 @@ function M.setup()
         { noremap = true, silent = true })
 end
 
-local function handle_selection(selected, buf, row, col)
-    if vim.api.nvim_buf_is_valid(buf) then
-        -- Get the current line content
-        local line = vim.api.nvim_buf_get_lines(buf, row, row + 1, false)[1]
-        -- Insert the selected text at the specified column
-        local new_line = line:sub(1, col) .. table.concat(selected, "\n") .. line:sub(col + 1)
-        -- Set the modified line back into the buffer
-        vim.api.nvim_buf_set_lines(buf, row, row + 1, false, { new_line })
-
-        vim.api.nvim_win_set_cursor(0, { row + 1, col + #table.concat(selected, "\n") })
-    else
-        print("Invalid buffer")
+local function handle_fzf_selection(selected, context)
+    if not vim.api.nvim_buf_is_valid(context.buf) or #selected == 0 then
+        return
     end
+
+    if #selected > 1 then
+        table.remove(selected, 1)
+    end
+
+    local final_text
+    if context.type == 'columns' then
+        local alias = (context.alias_prefix and context.alias_prefix ~= "") and (context.alias_prefix .. ".") or ""
+        local separator = context.is_where and " and " or ", "
+        local prefixed_items = {}
+        for i, item in ipairs(selected) do
+            local prefix = (i == 1 and "") or alias
+            table.insert(prefixed_items, prefix .. item)
+        end
+        final_text = table.concat(prefixed_items, separator)
+    else
+        final_text = table.concat(selected, "\n")
+    end
+
+    vim.api.nvim_buf_set_text(context.buf, context.start_row, context.start_col, context.end_row, context.end_col,
+        { final_text })
+    vim.api.nvim_win_set_cursor(0, { context.start_row + 1, context.start_col + #final_text })
+    vim.api.nvim_feedkeys('i', 'n', false)
 end
 
--- Function to trigger fzf with the completion items
+
 function M.trigger_fzf()
-    local items, fzf_option, alias, where = M.complete_func(0)
+    local cursor_pos = vim.api.nvim_win_get_cursor(0)
+    local start_col = M.complete_manual(1)
 
-    alias = (alias and alias ~= "") and (alias .. ".") or ""
-    local sep = where and " and " or ", "
-
-
-    -- get info for current buffer
-    local buf = vim.api.nvim_get_current_buf()
-    local cursor_pos = vim.api.nvim_win_get_cursor(0) -- {row, col} (1-based indexing)
-    local row = cursor_pos[1] - 1                     -- Convert to 0-based indexing for nvim_buf_set_lines
-    local col = cursor_pos[2]
-    -- Use fzf to select from the list
-    local fzf_run = vim.fn['fzf#run']
-    local fzf_wrap = vim.fn['fzf#wrap']
-
-    local wrapped = fzf_wrap({
-        source = items,
-        window = {
-            width = 0.5,
-            height = 0.4,
-        },
-        options = fzf_option,
-    })
-
-
-    wrapped['sink*'] = function(selected)
-        local result = {}
-        for _, item in ipairs(selected) do
-            if type(item) == "string" then
-                item = vim.split(item, "\n")
-            end
-            item = table.concat(item, "\n")
-            table.insert(result, item)
-        end
-
-        table.remove(result, 1)
-
-        local final_result
-        if #result > 1 then
-            final_result = table.concat(result, sep .. alias)
-        else
-            final_result = result[1]
-        end
-
-        handle_selection({ final_result }, buf, row, col)
-        vim.api.nvim_feedkeys('i', 'n', false)
+    local completion_data = M.complete_manual(0)
+    if not completion_data or not next(completion_data.items) then
+        print("No completions found.")
+        return
     end
 
-    fzf_run(wrapped)
+    completion_data.context.buf = vim.api.nvim_get_current_buf()
+    completion_data.context.start_row = cursor_pos[1] - 1
+    completion_data.context.end_row = cursor_pos[1] - 1
+    completion_data.context.start_col = start_col
+    completion_data.context.end_col = cursor_pos[2]
+
+
+    local fzf_config = {
+        source = completion_data.items,
+        options = completion_data.fzf_options,
+        window = { width = 0.5, height = 0.4, border = 'rounded' },
+        -- Use a lambda with a captured context for cleaner state management
+        ['sink*'] = function(selected)
+            handle_fzf_selection(selected, completion_data.context)
+        end,
+    }
+
+    vim.fn['fzf#run'](fzf_config)
 end
 
 return M
