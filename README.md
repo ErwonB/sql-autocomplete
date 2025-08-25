@@ -39,13 +39,15 @@ end
 
 function source:get_completions(_, callback)
     local items = {}
-    for _, value in ipairs(require 'completion'.complete_func(0, "")) do
-        table.insert(items, {
-            label = value,
-            kind = require("blink.cmp.types").CompletionItemKind.Text,
-            insertText = value,
-            insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText,
-        })
+    if vim.bo.filetype == 'teradata' or vim.bo.filetype == 'sql' then
+        for _, value in ipairs(require 'completion'.complete_func(0, "")) do
+            table.insert(items, {
+                label = value,
+                kind = require("blink.cmp.types").CompletionItemKind.Text,
+                insertText = value,
+                insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText,
+            })
+        end
     end
     callback({ items = items })
 end
