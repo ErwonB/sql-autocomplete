@@ -17,8 +17,6 @@ M.defaults = {
     -- tpt_script
     tpt_script = tpt_script[1],
 
-    pattern = { 'sql', 'teradata' },
-
 }
 
 M.options = {}

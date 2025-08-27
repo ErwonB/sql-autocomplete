@@ -209,7 +209,7 @@ end
 function M.setup(user_config)
     config.setup(user_config)
     vim.api.nvim_create_autocmd("FileType", {
-        pattern = config.options.pattern,
+        pattern = { "sql", "teradata" },
         callback = function()
             -- Set completefunc for SQL files
             vim.api.nvim_set_option_value('completefunc', "v:lua.require'sql-autocomplete.completion'.complete_func",
