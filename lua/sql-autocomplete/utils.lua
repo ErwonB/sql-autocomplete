@@ -173,7 +173,7 @@ function M.export_db_data()
         " -u \"user='" .. user .. "', pwd='" .. pwd .. "', tdpid='" .. tdpid .. "', data_path='" .. data_tmp .. "'\""
 
     local data_tmp_file = data_tmp .. "/data_tmp.csv"
-    M.remove_files(data_tmp_file)
+    remove_files(data_tmp_file)
     local tpt_result = vim.fn.system(tbuild_command)
     local exit_code = vim.v.shell_error
     if exit_code ~= 0 then
