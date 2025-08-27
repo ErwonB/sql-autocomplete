@@ -25,7 +25,8 @@ DESCRIPTION 'Export data from Teradata to a file'
         order by c.DATABASENAME, c.TABLENAME, c.COLUMNID;',
         VARCHAR PrivateLogName = 'selector_log',
         VARCHAR UserName = @user,
-        VARCHAR UserPassword = @pwd,
+        VARCHAR UserPassword = '$tdwallet('||@user||')',
+        VARCHAR LogonMech = @logon_mech,
         VARCHAR TdpId = @tdpid,
         VARCHAR ReportModeOn = 'Y'
     );

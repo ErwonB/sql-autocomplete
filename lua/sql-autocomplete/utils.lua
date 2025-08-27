@@ -153,8 +153,8 @@ end
 --- @return nil
 function M.export_db_data()
     local user = config.options.user
-    local pwd = user and "\\$tdwallet(" .. user .. ")" or ""
     local tdpid = config.options.tdpid
+    local logon_mech = config.options.log_mech
     local tpt_script = config.options.tpt_script
 
     local data_tmp = config.options.data_dir
@@ -164,13 +164,14 @@ function M.export_db_data()
         return vim.notify(msg, vim.log.levels.ERROR)
     end
 
-    if not user or not tdpid or not tpt_script then
+    if not user or not tdpid or not tpt_script or not logon_mech then
         return vim.notify("Missing TD env variables", vim.log.levels.ERROR)
     end
 
     local tbuild_command = "tbuild -f " ..
         tpt_script ..
-        " -u \"user='" .. user .. "', pwd='" .. pwd .. "', tdpid='" .. tdpid .. "', data_path='" .. data_tmp .. "'\""
+        " -u \"user='" ..
+        user .. "', logon_mech='" .. logon_mech .. "', tdpid='" .. tdpid .. "', data_path='" .. data_tmp .. "'\""
 
     local data_tmp_file = data_tmp .. "/data_tmp.csv"
     remove_files(data_tmp_file)
