@@ -1,1 +1,2 @@
-lua require('sql-autocomplete')
+lua require('sql-autocomplete.sql-autocomplete')
+

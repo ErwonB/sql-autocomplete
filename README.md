@@ -2,13 +2,17 @@
 
 ## Dependencies :
 * [fzf.vim](https://github.com/junegunn/fzf.vim) from junegunn to call fzf
-* [autocompletels](https://github.com/ErwonB/autocompletels)
+* _tbuild_ : Teradata Tools and Utilities
 
 ## Setup :
 
-Fill the 2 required variables in lua/sql-autocomplete.lua :
-* _vim.g.autocompletels_ : path to the executable of autocompletels
-* _vim.g.autocompletels_data_ : path to the generated data
+Database connection can be taken directly from [vim-teradata](https://github.com/ErwonB/vim-teradata) configuration
+Otherwise, provide following value in the setup :
+* log_mech : logon mechanism (TD2, LDAP ...)
+* user : DB username
+* tdpid : hostname or IP of TD server
+
+_sql-autocomplete_ relies on exported data file to do the completion, run the _TDSync_ command to generate them
 
 ## Usage :
 `\<C-x>\<C-u>` to trigger the manual completion option
