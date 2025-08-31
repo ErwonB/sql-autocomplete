@@ -4,9 +4,10 @@ local M = {}
 local tpt_script = vim.api.nvim_get_runtime_file("lua/sql-autocomplete/tpt/export_db.tpt", true)
 M.defaults = {
     -- Connection parameters
-    log_mech = nil,
-    user = nil,
-    tdpid = nil,
+    -- log_mech = nil,
+    -- user = nil,
+    -- tdpid = nil,
+    -- pattern
 
     -- Path configuration
     -- Uses standard Neovim cache and data directories
@@ -24,31 +25,30 @@ M.options = {}
 --- Merges user-provided configuration with the defaults.
 --- @param opts table | nil User configuration table.
 function M.setup(opts)
-    vim.schedule(function()
-        local effective_defaults = vim.deepcopy(M.defaults)
+    local effective_defaults = vim.deepcopy(M.defaults)
 
-        local success, td_config = pcall(require, "vim-teradata.config")
-        if success then
-            local options = td_config.options
-            effective_defaults.user = options.user
-            effective_defaults.tdpid = options.tdpid
-            effective_defaults.log_mech = options.log_mech
+    local success, td_config = pcall(require, "vim-teradata.config")
+    if success then
+        local options = td_config.options
+        effective_defaults.user = options.user
+        effective_defaults.tdpid = options.tdpid
+        effective_defaults.log_mech = options.log_mech
+        effective_defaults.ft = options.ft
+    end
+
+    M.options = vim.tbl_deep_extend('force', {}, effective_defaults, opts or {})
+
+    -- Create necessary directories
+    local paths = {
+        M.options.temp_dir,
+        M.options.data_dir,
+        M.options.data_dir .. '/' .. M.options.data_completion_dir,
+    }
+    for _, path in ipairs(paths) do
+        if vim.fn.isdirectory(path) == 0 then
+            vim.fn.mkdir(path, 'p')
         end
-
-        M.options = vim.tbl_deep_extend('force', {}, effective_defaults, opts or {})
-
-        -- Create necessary directories
-        local paths = {
-            M.options.temp_dir,
-            M.options.data_dir,
-            M.options.data_dir .. '/' .. M.options.data_completion_dir,
-        }
-        for _, path in ipairs(paths) do
-            if vim.fn.isdirectory(path) == 0 then
-                vim.fn.mkdir(path, 'p')
-            end
-        end
-    end)
+    end
 end
 
 return M
