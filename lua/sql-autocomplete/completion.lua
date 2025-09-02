@@ -211,10 +211,6 @@ local function handle_fzf_selection(selected, context)
         return
     end
 
-    if #selected > 1 then
-        table.remove(selected, 1)
-    end
-
     local final_text
     if context.type == 'columns' then
         local alias = (context.alias_prefix and context.alias_prefix ~= "") and (context.alias_prefix .. ".") or ""
