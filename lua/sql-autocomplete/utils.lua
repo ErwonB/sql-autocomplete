@@ -70,8 +70,9 @@ function M.get_databases()
     local db_file = data_files_dir .. "/data.csv"
     local input_file = io.open(db_file, "r")
     if not input_file then
-        return vim.notify("Error: Could not open the input file: " .. db_file .. "\nBe sure to run TDSync command first",
-            vim.log.levels.ERROR)
+        -- return vim.notify("Error: Could not open the input file: " .. db_file .. "\nBe sure to run TDSync command first",
+        --     vim.log.levels.ERROR)
+        return {}
     end
 
     local databases = {}
@@ -90,8 +91,9 @@ function M.get_tables(database)
     local db_file = data_files_dir .. "/" .. database .. ".csv"
     local input_file = io.open(db_file, "r")
     if not input_file then
-        return vim.notify("Error: Could not open the input file: " .. db_file .. "\nBe sure to run TDSync command first",
-            vim.log.levels.ERROR)
+        -- return vim.notify("Error: Could not open the input file: " .. db_file .. "\nBe sure to run TDSync command first",
+        --     vim.log.levels.ERROR)
+        return {}
     end
 
     local unique_tables = {}
@@ -117,9 +119,10 @@ function M.get_columns(table_db_tb)
         local db_file = data_files_dir .. "/" .. item.db_name .. ".csv"
         local input_file = io.open(db_file, "r")
         if not input_file then
-            return vim.notify(
-                "Error: Could not open the input file: " .. db_file .. "\nBe sure to run TDSync command first",
-                vim.log.levels.ERROR)
+            -- return vim.notify(
+            --     "Error: Could not open the input file: " .. db_file .. "\nBe sure to run TDSync command first",
+            -- vim.log.levels.ERROR)
+            return {}
         end
 
         for line in input_file:lines() do
