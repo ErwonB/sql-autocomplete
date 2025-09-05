@@ -30,9 +30,10 @@ function M.setup(opts)
     local success, td_config = pcall(require, "vim-teradata.config")
     if success then
         local options = td_config.options
-        effective_defaults.user = options.user
-        effective_defaults.tdpid = options.tdpid
-        effective_defaults.log_mech = options.log_mech
+        local default_user_index = options.current_user_index
+        effective_defaults.user = options.users[default_user_index].user
+        effective_defaults.tdpid = options.users[default_user_index].tdpid
+        effective_defaults.log_mech = options.users[default_user_index].log_mech
         effective_defaults.ft = options.ft
     end
 
