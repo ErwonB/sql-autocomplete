@@ -63,7 +63,7 @@ local function analyze_sql_context(before_cursor, after_cursor)
     local table_clause_pattern = '[(from|join)]%s+([%w_]+)%.([%w_]+)%s*([%w_]*)'
 
     local contains_select = before_cursor:match('select')
-    local contains_where = before_cursor:match('where')
+    local contains_where = before_cursor:match('where') or before_cursor:match('order%s+by')
 
     local search_text = contains_where and before_cursor or after_cursor
 
