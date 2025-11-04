@@ -1,121 +1,30 @@
 local utils = require('sql-autocomplete.utils')
+local regex = require('sql-autocomplete.regex')
+local ts = require('sql-autocomplete.ts')
+local config = require('sql-autocomplete.config')
 
 local M = {}
 
---- Retrieves lowercase text before the cursor until an empty line or semicolon.
---- @return string The trimmed, lowercase text before the cursor.
-local function get_text_before_cursor()
-    local cursor = vim.api.nvim_win_get_cursor(0)
-    local line = cursor[1]
-    local col = cursor[2]
-    local text_before = {}
-
-    -- Add the text from the current line before the cursor
-    local current_line = vim.api.nvim_get_current_line()
-    table.insert(text_before, string.lower(current_line:sub(1, col)))
-
-    while line > 1 do
-        line = line - 1
-        current_line = vim.api.nvim_buf_get_lines(0, line - 1, line, false)[1]
-        if current_line == "" or current_line:match(";") then
-            break
-        end
-        table.insert(text_before, 1, string.lower(current_line))
-    end
-
-    -- Join the collected lines in reverse order
-    return table.concat(text_before, " "):match("^%s*(.-)%s*$") -- Trim whitespace
-end
-
---- Retrieves lowercase text after the cursor until an empty line or semicolon.
---- @return string The trimmed, lowercase text after the cursor.
-local function get_text_after_cursor()
-    local cursor = vim.api.nvim_win_get_cursor(0)
-    local line = cursor[1]
-    local col = cursor[2]
-
-    -- Add the text from the current line after the cursor
-    local lines_after = {}
-    local current_line = vim.api.nvim_get_current_line()
-    table.insert(lines_after, current_line:sub(col + 1))
-
-    while line < vim.api.nvim_buf_line_count(0) and not current_line:match(";") do
-        line = line + 1
-        current_line = vim.api.nvim_buf_get_lines(0, line - 1, line, false)[1]
-        if current_line == "" or current_line:match(";") then
-            break
-        end
-        table.insert(lines_after, current_line)
-    end
-
-    local result_string = table.concat(lines_after, " ")
-    return string.lower(result_string:match("^%s*(.-)%s*$") or "")
-end
 
 --- Analyzes SQL context around the cursor to determine completion type and relevant tables or databases.
---- @param before_cursor string Text before the cursor.
---- @param after_cursor string Text after the cursor.
 --- @return table A context table containing completion type and metadata.
-local function analyze_sql_context(before_cursor, after_cursor)
-    local context = {}
+local function analyze_sql_context()
+    local context
+    local buf = vim.api.nvim_get_current_buf()
+    local completion_mode = config.options.completion_mode
 
-    -- Pattern to find tables/views from 'from' and 'join' clauses, capturing db, table, and alias
-    local table_clause_pattern = '[(from|join)]%s+([%w_]+)%.([%w_]+)%s*([%w_]*)'
-
-    local contains_select = before_cursor:match('select')
-    local contains_where = before_cursor:match('where') or before_cursor:match('order%s+by')
-
-    local search_text = contains_where and before_cursor or after_cursor
-
-    -- Check for column completion context (between SELECT and FROM, or after WHERE)
-    if contains_select or contains_where then
-        context.tables = {}
-        -- for db, tbl, alias in search_text:gmatch(table_clause_pattern1) .. search_text:gmatch(table_clause_pattern2) do
-        for db, tbl, alias in search_text:gmatch(table_clause_pattern) do
-            table.insert(context.tables, {
-                db_name = string.upper(db),
-                tb_name = string.upper(tbl),
-                alias = string.upper(alias or ""),
-            })
-        end
-
-        if #context.tables > 0 then
-            context.type = 'columns'
-            context.is_where = contains_where
-            context.alias_prefix = before_cursor:match(".*%s+([%w_]+)%.$")
-            return context
-        end
+    local ok, parser = pcall(vim.treesitter.get_parser, buf, 'sql')
+    if not ok or not parser or completion_mode == 'regex' then
+        context = regex.analyze_sql_context()
+    else
+        context = ts.analyze_sql_context()
     end
 
-    local db_patterns = {
-        'from%s+([%w_]+)%.',
-        'from',
-        'join%s*([%w_]+)%.',
-        'join',
-        'show%s+table%s+([%w_]+)%.',
-        'show%s+view%s+([%w_]+)%.',
-        'show%s+macro%s+([%w_]+)%.'
-    }
-
-    local db_name = nil
-    local max_start = 0
-    for _, pat in ipairs(db_patterns) do
-        local start, _, cap = before_cursor:find(pat)
-        if start and start > max_start then
-            max_start = start
-            db_name = cap
-        end
-    end
-
-    if db_name then
-        context.type = 'tables'
-        context.db_name = string.upper(db_name)
-        return context
-    end
-
-    context.type = 'databases'
-    return context
+    return context or {}
 end
+
+
+
 
 --- Provides manual SQL completion items or the start column for completion.
 --- @param findstart number Indicates whether to find the start column (1) or return completion items (0).
@@ -129,9 +38,7 @@ function M.complete_manual(findstart)
         end
         return col
     else
-        local before_cursor = get_text_before_cursor()
-        local after_cursor = get_text_after_cursor()
-        local context = analyze_sql_context(before_cursor, after_cursor)
+        local context = analyze_sql_context()
 
         local items = {}
         local res
@@ -144,6 +51,41 @@ function M.complete_manual(findstart)
                 end, context.tables)
             end
             res = utils.get_columns(context.tables)
+            local candidate_entries
+
+            if context.alias_prefix and context.alias_prefix ~= "" then
+                candidate_entries = vim.tbl_filter(function(item)
+                    return string.upper(item.alias) == string.upper(context.alias_prefix)
+                end, context.buffer_fields)
+            else
+                candidate_entries = context.buffer_fields
+            end
+
+            local seen_lists = {}
+            local unique_field_lists = {}
+
+            for _, entry in ipairs(candidate_entries) do
+                local list = entry.field_list
+                if not seen_lists[list] then
+                    seen_lists[list] = true
+                    table.insert(unique_field_lists, list)
+                end
+            end
+
+            local seen_fields = {}
+            local final_flat_list = {}
+
+            for _, list in ipairs(unique_field_lists) do
+                for _, field_name in ipairs(list) do
+                    if not seen_fields[field_name] then
+                        seen_fields[field_name] = true
+                        table.insert(final_flat_list, field_name)
+                    end
+                end
+            end
+
+            res = res or {}
+            vim.list_extend(res, final_flat_list)
             fzf_options = "--multi"
         elseif context.type == 'tables' then
             res = utils.get_tables(context.db_name)
@@ -173,9 +115,7 @@ function M.complete_func(findstart, base)
         end
         return col
     else
-        local before_cursor = get_text_before_cursor()
-        local after_cursor = get_text_after_cursor()
-        local context = analyze_sql_context(before_cursor, after_cursor)
+        local context = analyze_sql_context()
 
         local items = {}
         local res
@@ -187,6 +127,41 @@ function M.complete_func(findstart, base)
                 end, context.tables)
             end
             res = utils.get_columns(context.tables)
+            local candidate_entries
+
+            if context.alias_prefix and context.alias_prefix ~= "" then
+                candidate_entries = vim.tbl_filter(function(item)
+                    return string.upper(item.alias) == string.upper(context.alias_prefix)
+                end, context.buffer_fields)
+            else
+                candidate_entries = context.buffer_fields
+            end
+
+            local seen_lists = {}
+            local unique_field_lists = {}
+
+            for _, entry in ipairs(candidate_entries) do
+                local list = entry.field_list
+                if not seen_lists[list] then
+                    seen_lists[list] = true
+                    table.insert(unique_field_lists, list)
+                end
+            end
+
+            local seen_fields = {}
+            local final_flat_list = {}
+
+            for _, list in ipairs(unique_field_lists) do
+                for _, field_name in ipairs(list) do
+                    if not seen_fields[field_name] then
+                        seen_fields[field_name] = true
+                        table.insert(final_flat_list, field_name)
+                    end
+                end
+            end
+
+            res = res or {}
+            vim.list_extend(res, final_flat_list)
         elseif context.type == 'tables' then
             res = utils.get_tables(context.db_name)
         elseif context.type == 'databases' then
