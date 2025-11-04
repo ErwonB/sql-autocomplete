@@ -16,7 +16,7 @@ Optinal parameters :
 * filter_db : used to filter databases matching this param
 * completion_mode : treesitter(default)/regex
 
-[treesitter to use](https://github.com/ErwonB/vim-treesitter-teradata)
+[treesitter to use](https://github.com/ErwonB/tree-sitter-teradata)
 
 _sql-autocomplete_ relies on exported data file to do the completion, run the _TDSync_ command to generate them
 
