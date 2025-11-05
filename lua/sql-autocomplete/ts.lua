@@ -516,14 +516,18 @@ function M.analyze_sql_context()
     local s_sr, s_er = node_rows(statement_node)
 
     local cursor_error_node = nil
+    local e_sr, e_er
     for _, node, _ in Q.has_error:iter_captures(cursor_node, bufnr, 0, -1) do
         cursor_error_node = node
+        e_sr, e_er = node_rows(cursor_error_node)
         break
+    end
+    if cursor_error_node and cursor_error_node ~= statement_node and any_capture(Q.has_last_from, cursor_error_node, bufnr, e_sr, e_er) then
+        return { type = 'databases' }
     end
 
     local has_sel_or_dml = any_capture(Q.has_sel_or_dml, statement_node, bufnr, s_sr, s_er)
     if (not has_sel_or_dml) and cursor_error_node and cursor_error_node ~= statement_node then
-        local e_sr, e_er = node_rows(cursor_error_node)
         has_sel_or_dml = any_capture(Q.has_sel_or_dml, cursor_error_node, bufnr, e_sr, e_er)
     end
 
@@ -537,7 +541,7 @@ function M.analyze_sql_context()
         end
     end
     if cursor_error_node and cursor_error_node ~= statement_node then
-        for _, node, _ in Q.has_where:iter_captures(cursor_error_node, bufnr, 0, -1) do
+        for _, node, _ in Q.has_where:iter_captures(cursor_error_node, bufnr, e_sr, e_er) do
             local s_row, s_col, _, _ = node:start()
             -- Check if the node starts before the cursor
             if s_row < row_1 - 1 or (s_row == row_1 - 1 and s_col < col_0) then
@@ -624,7 +628,7 @@ function M.analyze_sql_context()
         end
         if context.tables and #context.tables == 0 and context.buffer_fields and #context.buffer_fields == 0 then
             if cursor_error_node then
-                for _, _, _ in Q.has_last_from:iter_captures(cursor_error_node, bufnr, 0, -1) do
+                for _, _, _ in Q.has_last_from:iter_captures(cursor_error_node, bufnr, e_sr, e_er) do
                     return { type = 'databases' }
                 end
             end
