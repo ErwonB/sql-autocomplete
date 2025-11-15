@@ -50,7 +50,7 @@ end
 function source:get_completions(_, callback)
     local items = {}
     if vim.bo.filetype == 'teradata' or vim.bo.filetype == 'sql' then
-        for _, value in ipairs(require 'completion'.complete_func(0, "")) do
+        for _, value in ipairs(require 'sql-autocomplete.completion'.complete_func(0, "")) do
             table.insert(items, {
                 label = value,
                 kind = require("blink.cmp.types").CompletionItemKind.Text,
