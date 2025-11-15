@@ -19,14 +19,12 @@ DESCRIPTION 'Export data from Teradata to a file'
         on t.DATABASENAME = c.DATABASENAME
         and t.TABLENAME = c.TABLENAME
         where 1=1
-        and c.DATABASENAME like any (''ZDP%'', ''KVC%'', ''DWC%'', ''OVC%'', ''XVC%'', ''CFC%'', ''LPC%'', ''A3C%'', ''SHC%'')
-        and c.TABLENAME not like ''BKP_DEPL%''
         and t.TABLEKIND in (''T'', ''V'', ''M'')
-        order by c.DATABASENAME, c.TABLENAME, c.COLUMNID;',
+        order by c.DATABASENAME, c.TABLENAME, c.COLUMNID
+        ;',
         VARCHAR PrivateLogName = 'selector_log',
-        VARCHAR UserName = @user,
-        VARCHAR UserPassword = '$tdwallet('||@user||')',
-        VARCHAR LogonMech = @logon_mech,
+        VARCHAR UserName = @username,
+        VARCHAR UserPassword = @password,
         VARCHAR TdpId = @tdpid,
         VARCHAR ReportModeOn = 'Y'
     );
@@ -37,7 +35,7 @@ DESCRIPTION 'Export data from Teradata to a file'
     ATTRIBUTES
     (
         VARCHAR PrivateLogName = 'dataconnector_log',
-        VARCHAR DirectoryPath = @data_path,
+        VARCHAR DirectoryPath = @data_directory,
         VARCHAR FileName = 'data_tmp.csv',
         VARCHAR Format = 'DELIMITED',
         VARCHAR OpenMode = 'Write',
@@ -47,3 +45,4 @@ DESCRIPTION 'Export data from Teradata to a file'
     APPLY TO OPERATOR (FILE_WRITER)
     SELECT * FROM OPERATOR (SQL_SELECTOR);
 );
+
