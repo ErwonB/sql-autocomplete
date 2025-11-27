@@ -122,21 +122,10 @@ local function any_capture(query, node, bufnr, start_row, end_row)
     return false
 end
 
----
---- Gets the character immediately before the cursor position.
---- @return string|nil The previous character, or nil if at buffer start.
----
-local function get_prev_char()
-    local cursor = vim.api.nvim_win_get_cursor(0)
-    local row_1, col_0 = cursor[1], cursor[2]
-
-    -- Get the line where cursor is
-    local line = vim.api.nvim_buf_get_lines(0, row_1 - 1, row_1, false)[1]
-    if not line then
-        return nil
-    end
-
-    return line:sub(col_0, col_0)
+local function get_line_prefix(row, col)
+    local line = vim.api.nvim_buf_get_lines(0, row - 1, row, false)[1] or ""
+    -- Return text from start of line up to cursor position
+    return line:sub(1, col)
 end
 
 ---
@@ -207,31 +196,6 @@ local function get_enclosing_or_relevant_preceding_statement(node, bufnr, cursor
     return nil
 end
 
-
----
---- Retrieves lowercase text from the start of the statement to the cursor.
---- This is used to replicate the original logic's alias prefix matching.
---- @param statement_node table The enclosing statement node.
---- @return string The trimmed, lowercase text before the cursor.
----
-local function get_text_before_cursor(statement_node)
-    local cursor = vim.api.nvim_win_get_cursor(0)
-    local cursor_row_1 = cursor[1]
-    local cursor_col_0 = cursor[2]
-
-    local start_row_0, start_col_0, _, _ = statement_node:start()
-
-    local lines = vim.api.nvim_buf_get_lines(0, start_row_0, cursor_row_1, false)
-
-    if #lines == 0 then
-        return ""
-    end
-
-    lines[1] = lines[1]:sub(start_col_0 + 1)
-    lines[#lines] = lines[#lines]:sub(1, cursor_col_0)
-
-    return table.concat(lines, " "):match("^%s*(.-)%s*$"):lower()
-end
 
 ---
 --- Manual implementation of the missing 'child_by_field_name' helper.
@@ -551,16 +515,17 @@ function M.analyze_sql_context()
         end
     end
 
-    local prev_char = get_prev_char()
-    if prev_char == '.' then
-        local before_cursor = get_text_before_cursor(statement_node)
-        local db_match = before_cursor:match("([%w_]+)%.%s*$")
-        if db_match and utils.is_a_db(db_match) then
-            context.type = 'tables'
-            context.db_name = string.upper(db_match)
-            return context
-        end
+    -- Get the text immediately preceding the cursor on the current line
+    local line_prefix = get_line_prefix(row_1, col_0)
+
+    local before_dot_match, _ = line_prefix:match("([%w_]+)%.([%w_]*)$")
+
+    if before_dot_match and utils.is_a_db(before_dot_match) then
+        context.type = 'tables'
+        context.db_name = string.upper(before_dot_match)
+        return context
     end
+
 
     -- 2. Check for Column Context
     if has_sel_or_dml or has_where then
@@ -640,12 +605,8 @@ function M.analyze_sql_context()
             context.is_where = has_where
 
 
-            if prev_char == '.' then
-                local before_cursor = get_text_before_cursor(statement_node)
-                context.alias_prefix = before_cursor:match(".*%s+([%w_]+)%.$")
-                if context.alias_prefix then
-                    context.alias_prefix = string.upper(context.alias_prefix)
-                end
+            if before_dot_match then
+                context.alias_prefix = string.upper(before_dot_match)
             end
             return context
         end
