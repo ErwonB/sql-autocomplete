@@ -2,7 +2,7 @@ local utils = require('sql-autocomplete.utils')
 
 local M = {}
 
---helper in here for now, to move in after/plugin/ts.lua maybe ?
+-- Helper to check if a node is the last child of its parent
 local function is_last_child(node)
     if not node then return false end
     local parent = node:parent()
@@ -12,7 +12,6 @@ local function is_last_child(node)
     if count == 0 then return false end
     return parent:child(count - 1) == node
 end
-
 
 -- Any-variant: at least ONE captured node must be a last child
 vim.treesitter.query.add_predicate("any-last?", function(match, _, _, pred)
@@ -28,36 +27,6 @@ vim.treesitter.query.add_predicate("any-last?", function(match, _, _, pred)
         return is_last_child(cap)
     end
 end, { force = true })
-
-local function has_ancestor(node, ancestor_type)
-    if not node or not ancestor_type then return false end
-    local parent = node:parent()
-    while parent do
-        if parent:type() == ancestor_type then return true end
-        parent = parent:parent()
-    end
-    return false
-end
-
-vim.treesitter.query.add_predicate("not-has-ancestor?", function(match, _, _, pred)
-    local cap = match[pred[2]]
-    if cap == nil then return true end -- If no capture, consider it as not having (true for negation)
-
-    local ancestor_type = pred[3]
-    if not ancestor_type then return true end
-
-    if type(cap) == "table" then
-        for _, n in ipairs(cap) do
-            if has_ancestor(n, ancestor_type) then return false end
-        end
-        return true
-    else
-        return not has_ancestor(cap, ancestor_type)
-    end
-end, { force = true })
-
---- end ts helper
-
 
 local Q = {
     has_sel_or_dml = vim.treesitter.query.parse("sql", [[
@@ -94,20 +63,8 @@ local Q = {
          name: (identifier) @col)) @item))
 
 ]]),
-    relation = vim.treesitter.query.parse("sql", [[
-    (
-        (relation) @rel
-      (#not-has-ancestor? @rel "subquery")
-    )
-    ]]),
-    obj_ref = vim.treesitter.query.parse("sql", [[
-(
-  (object_reference) @obj
-  (#not-has-ancestor? @obj "subquery")
-)
-]]),
-
-
+    relation = vim.treesitter.query.parse("sql", [[ (relation) @rel ]]),
+    obj_ref = vim.treesitter.query.parse("sql", [[ (object_reference) @obj ]]),
 }
 
 local function node_rows(n)
@@ -124,18 +81,51 @@ end
 
 local function get_line_prefix(row, col)
     local line = vim.api.nvim_buf_get_lines(0, row - 1, row, false)[1] or ""
-    -- Return text from start of line up to cursor position
     return line:sub(1, col)
 end
 
 ---
+--- Finds the closest ancestor node that acts as a scope boundary (subquery or statement).
+--- @param node TSNode? The starting node.
+--- @return table|nil The scope node.
+---
+local function get_scope_node(node)
+    local current = node
+    while current do
+        local type = current:type()
+        -- TODO create a list of those types of node
+        if type == 'subquery' or type == 'statement' then
+            return current
+        end
+        current = current:parent()
+    end
+    return nil
+end
+
+---
+--- Checks if a node is a direct descendant of the scope node,
+--- meaning it is not nested inside another intermediate subquery.
+--- @param node table The node to check (e.g., a relation).
+--- @param scope_node table The defining scope (subquery or statement).
+--- @return boolean
+---
+local function is_direct_scope_descendant(node, scope_node)
+    local current = node:parent()
+    while current do
+        if current == scope_node then return true end
+        -- If we hit an intermediate subquery before the scope node, it's nested too deep.
+        if current:type() == 'subquery' then return false end
+        current = current:parent()
+    end
+    return false
+end
+
+---
 --- Finds the enclosing statement node for a given node.
---- If the node is not inside a statement, finds the immediately preceding statement *only if*
---- that preceding statement is not followed immediately by a semicolon node.
 --- @param node table The starting Tree-sitter node.
---- @param bufnr number The buffer number (defaults to 0).
---- @param cursor_row number the row number of the current cursor position
---- @return table|nil The enclosing or relevant preceding statement node, or nil.
+--- @param bufnr number The buffer number.
+--- @param cursor_row number The row number of the cursor (0-indexed).
+--- @return table|nil The enclosing or relevant preceding statement node.
 ---
 local function get_enclosing_or_relevant_preceding_statement(node, bufnr, cursor_row)
     bufnr = bufnr or 0
@@ -143,7 +133,6 @@ local function get_enclosing_or_relevant_preceding_statement(node, bufnr, cursor
 
     local current = node
     local root_node = nil
-    -- Get the start position (row, col) of the node containing the cursor
     local original_node_start_row, _, _, _ = node:start()
     original_node_start_row = math.max(original_node_start_row, cursor_row)
 
@@ -159,6 +148,7 @@ local function get_enclosing_or_relevant_preceding_statement(node, bufnr, cursor
         end
         local parent = current:parent()
         if not parent then
+            -- If we reached the top without finding 'program', treat this as root
             if ntype == 'program' then root_node = current end
             break
         end
@@ -168,16 +158,15 @@ local function get_enclosing_or_relevant_preceding_statement(node, bufnr, cursor
     -- 2. If no enclosing statement found, but we identified the program root
     if root_node then
         local prev_type = nil
+        -- Iterate backwards to find the closest preceding statement
         for i = 0, root_node:child_count() - 1 do
             local child = root_node:child(root_node:child_count() - 1 - i)
             if not child then goto continue end
 
             local _, _, child_end_row, _ = child:range()
 
-            -- Check if this child ENDS strictly before the original node STARTS
-            if child_end_row <= original_node_start_row
-            then
-                -- If this child is a statement, remember it as the potential predecessor
+            -- Check if this child ends at or before the cursor area
+            if child_end_row <= original_node_start_row then
                 if child:type() == 'statement' and prev_type ~= ';' then
                     return child
                 end
@@ -187,12 +176,12 @@ local function get_enclosing_or_relevant_preceding_statement(node, bufnr, cursor
         end
     end
 
-    -- 3. Top node is ERROR not program so only one query not correctly parsed
-    if current:type() == 'ERROR' then
+    -- 3. If we are at the top level (e.g. single line query parsed as ERROR or program -> ERROR)
+    -- 'current' holds the last node visited (likely 'program' or 'ERROR' root)
+    if current and current:type() == 'ERROR' then
         return current
     end
 
-    -- 4. If no relevant statement found
     return nil
 end
 
@@ -229,8 +218,7 @@ local function try_build_parsable_query(bufnr, row_0, col_0)
     local line_byte_len = #line
 
     local prefix = vim.api.nvim_buf_get_text(bufnr, row_0, 0, row_0, col_0, {})[1] or ""
-    local suffix = vim.api.nvim_buf_get_text(bufnr, row_0, col_0, row_0, line_byte_len, {})[1] or
-        ""
+    local suffix = vim.api.nvim_buf_get_text(bufnr, row_0, col_0, row_0, line_byte_len, {})[1] or ""
     local after = vim.api.nvim_buf_get_lines(bufnr, row_0 + 1, -1, false)
 
     local parts = {}
@@ -241,17 +229,18 @@ local function try_build_parsable_query(bufnr, row_0, col_0)
 end
 
 ---
---- Finds all object_reference in a statement_node
---- @param statement_node table The enclosing statement node.
+--- Finds all object_reference in a scope
+--- @param scope_node table The enclosing statement node.
 --- @param source integer|string The buffer number or source string for get_node_text and iter_captures. Defaults to 0.
 --- @return table A list of { db_name, tb_name, alias } tables.
 ---
-local function find_all_object_reference(statement_node, source)
+local function find_all_object_reference(scope_node, source)
     source = source or 0
     local tables = {}
 
-    for _, obj_node, _ in Q.obj_ref:iter_captures(statement_node, source, 0, -1) do
-        if not obj_node then
+    for _, obj_node, _ in Q.obj_ref:iter_captures(scope_node, source, 0, -1) do
+        -- Ensure object is part of the current scope
+        if not obj_node or not is_direct_scope_descendant(obj_node, scope_node) then
             goto continue
         end
 
@@ -265,67 +254,55 @@ local function find_all_object_reference(statement_node, source)
             end
         end
 
-        if obj_node then
-            local _, schema_name, tbl_name = nil, nil, nil
+        local _, schema_name, tbl_name = nil, nil, nil
+        local db_node = get_child_by_field_name(obj_node, "database")
+        local schema_node = get_child_by_field_name(obj_node, "schema")
+        local tbl_node = get_child_by_field_name(obj_node, "name")
 
-            local db_node = get_child_by_field_name(obj_node, "database")
-            local schema_node = get_child_by_field_name(obj_node, "schema")
-            local tbl_node = get_child_by_field_name(obj_node, "name")
+        if schema_node then schema_name = vim.treesitter.get_node_text(schema_node, source) end
+        if tbl_node then tbl_name = vim.treesitter.get_node_text(tbl_node, source) end
 
-            if schema_node then
-                schema_name = vim.treesitter.get_node_text(schema_node, source)
+        if not db_node and not schema_node and not tbl_node then
+            local children = {}
+            for child in obj_node:iter_children() do
+                if child:type() == 'identifier' then table.insert(children, child) end
             end
-            if tbl_node then
-                tbl_name = vim.treesitter.get_node_text(tbl_node, source)
-            end
-
-            -- Handle implicit/unnamed fields if named fields weren't found
-            if not db_node and not schema_node and not tbl_node then
-                local children = {}
-                for child in obj_node:iter_children() do
-                    if child:type() == 'identifier' then
-                        table.insert(children, child)
-                    end
-                end
-                if #children == 1 then     -- e.g., (object_reference (identifier))
-                    tbl_name = vim.treesitter.get_node_text(children[1], source)
-                elseif #children == 2 then -- e.g., (object_reference (identifier) (identifier))
-                    schema_name = vim.treesitter.get_node_text(children[1], source)
-                    tbl_name = vim.treesitter.get_node_text(children[2], source)
-                elseif #children == 3 then -- e.g., (object_reference (identifier) (identifier) (identifier))
-                    schema_name = vim.treesitter.get_node_text(children[2], source)
-                    tbl_name = vim.treesitter.get_node_text(children[3], source)
-                end
-            end
-
-            local alias_str = alias_node and vim.treesitter.get_node_text(alias_node, source) or ""
-
-            if schema_name and tbl_name then
-                table.insert(tables, {
-                    db_name = string.upper(schema_name),
-                    tb_name = string.upper(tbl_name),
-                    alias = string.upper(alias_str),
-                })
+            if #children == 1 then
+                tbl_name = vim.treesitter.get_node_text(children[1], source)
+            elseif #children == 2 then
+                schema_name = vim.treesitter.get_node_text(children[1], source)
+                tbl_name = vim.treesitter.get_node_text(children[2], source)
+            elseif #children == 3 then
+                schema_name = vim.treesitter.get_node_text(children[2], source)
+                tbl_name = vim.treesitter.get_node_text(children[3], source)
             end
         end
 
+        local alias_str = alias_node and vim.treesitter.get_node_text(alias_node, source) or ""
+
+        if schema_name and tbl_name then
+            table.insert(tables, {
+                db_name = string.upper(schema_name),
+                tb_name = string.upper(tbl_name),
+                alias = string.upper(alias_str),
+            })
+        end
         ::continue::
     end
     return tables
 end
 
 ---
---- @param statement_node TSNode The enclosing statement node.
+--- Finds fields from subqueries defined strictly within the current scope.
+---
+--- @param scope_node TSNode The enclosing statement node.
 --- @param source integer|string Buffer number or source string for get_node_text/iter_* (defaults to 0).
 --- @return table
-local function find_all_fields_from_subquery(statement_node, source)
+local function find_all_fields_from_subquery(scope_node, source)
     source = source or 0
-
     local results = {}
 
-
-    -- Iterate matches (grouped captures per relation/subquery)
-    for _, match, _ in Q.subq_with_alias:iter_matches(statement_node, source, 0, -1) do
+    for _, match, _ in Q.subq_with_alias:iter_matches(scope_node, source, 0, -1) do
         local subquery_node, alias_node
         for capid, n in pairs(match) do
             local capname = Q.subq_with_alias.captures[capid]
@@ -337,58 +314,53 @@ local function find_all_fields_from_subquery(statement_node, source)
         end
 
         if subquery_node then
-            local subquery_alias = ""
-            if alias_node then
-                subquery_alias = vim.treesitter.get_node_text(alias_node, source)
-            end
-            local fields = {}
+            -- Verify scoping: The subquery must be a direct child relation of the scope
+            local relation_node = subquery_node:parent()
+            if relation_node and is_direct_scope_descendant(relation_node, scope_node) then
+                local subquery_alias = ""
+                if alias_node then
+                    subquery_alias = vim.treesitter.get_node_text(alias_node, source)
+                end
+                local fields = {}
 
-            for _, sel_expr_match, _ in Q.select_expression:iter_matches(subquery_node, source, 0, -1) do
-                local col_node
-                for capid, n in pairs(sel_expr_match) do
-                    local capname = Q.select_expression.captures[capid]
-                    if capname == "col" then
-                        col_node = n[1]
+                for _, sel_expr_match, _ in Q.select_expression:iter_matches(subquery_node, source, 0, -1) do
+                    local col_node
+                    for capid, n in pairs(sel_expr_match) do
+                        if Q.select_expression.captures[capid] == "col" then col_node = n[1] end
+                    end
+                    if col_node then
+                        local col_name = vim.treesitter.get_node_text(col_node, source)
+                        if col_name and col_name ~= "" then table.insert(fields, col_name) end
                     end
                 end
 
-                if col_node then
-                    local col_name = vim.treesitter.get_node_text(col_node, source)
-                    if col_name and col_name ~= "" then
-                        table.insert(fields, col_name)
-                    end
+                if #fields > 0 then
+                    table.insert(results, { field_list = fields, alias = subquery_alias })
                 end
-            end
-
-            if #fields > 0 then
-                table.insert(results, { field_list = fields, alias = subquery_alias })
             end
         end
     end
-
     return results
 end
 
 ---
---- Finds all tables and aliases within a given statement node.
---- @param statement_node table The enclosing statement node.
+--- Finds all tables and aliases strictly within a given scope.
+--- @param scope_node table The enclosing statement node.
 --- @param source integer|string The buffer number or source string for get_node_text and iter_captures. Defaults to 0.
 --- @return table A list of { db_name, tb_name, alias } tables.
 ---
-local function find_all_tables_in_scope(statement_node, source)
+local function find_all_tables_in_scope(scope_node, source)
     source = source or 0
     local tables = {}
 
-    for _, rel_node, _ in Q.relation:iter_captures(statement_node, source, 0, -1) do
-        if not rel_node then
+    for _, rel_node, _ in Q.relation:iter_captures(scope_node, source, 0, -1) do
+        if not rel_node or not is_direct_scope_descendant(rel_node, scope_node) then
             goto continue
         end
 
         local obj_ref = nil
         for child in rel_node:iter_children() do
-            if child:type() == "subquery" then
-                goto continue
-            end
+            if child:type() == "subquery" then goto continue end
             if child:type() == "object_reference" then
                 obj_ref = child
                 break
@@ -397,7 +369,6 @@ local function find_all_tables_in_scope(statement_node, source)
 
         local alias_node = get_child_by_field_name(rel_node, "alias")
         if not alias_node then
-            -- Find the first identifier child that is not the object_reference
             for child in rel_node:iter_children() do
                 if child:type() == 'identifier' and child ~= obj_ref then
                     alias_node = child
@@ -408,32 +379,24 @@ local function find_all_tables_in_scope(statement_node, source)
 
         if obj_ref then
             local _, schema_name, tbl_name = nil, nil, nil
-
             local db_node = get_child_by_field_name(obj_ref, "database")
             local schema_node = get_child_by_field_name(obj_ref, "schema")
             local tbl_node = get_child_by_field_name(obj_ref, "name")
 
-            if schema_node then
-                schema_name = vim.treesitter.get_node_text(schema_node, source)
-            end
-            if tbl_node then
-                tbl_name = vim.treesitter.get_node_text(tbl_node, source)
-            end
+            if schema_node then schema_name = vim.treesitter.get_node_text(schema_node, source) end
+            if tbl_node then tbl_name = vim.treesitter.get_node_text(tbl_node, source) end
 
-            -- Handle implicit/unnamed fields if named fields weren't found
             if not db_node and not schema_node and not tbl_node then
                 local children = {}
                 for child in obj_ref:iter_children() do
-                    if child:type() == 'identifier' then
-                        table.insert(children, child)
-                    end
+                    if child:type() == 'identifier' then table.insert(children, child) end
                 end
-                if #children == 1 then     -- e.g., (object_reference (identifier))
+                if #children == 1 then
                     tbl_name = vim.treesitter.get_node_text(children[1], source)
-                elseif #children == 2 then -- e.g., (object_reference (identifier) (identifier))
+                elseif #children == 2 then
                     schema_name = vim.treesitter.get_node_text(children[1], source)
                     tbl_name = vim.treesitter.get_node_text(children[2], source)
-                elseif #children == 3 then -- e.g., (object_reference (identifier) (identifier) (identifier))
+                elseif #children == 3 then
                     schema_name = vim.treesitter.get_node_text(children[2], source)
                     tbl_name = vim.treesitter.get_node_text(children[3], source)
                 end
@@ -449,7 +412,6 @@ local function find_all_tables_in_scope(statement_node, source)
                 })
             end
         end
-
         ::continue::
     end
     return tables
@@ -465,20 +427,26 @@ function M.analyze_sql_context()
     local row_1, col_0 = cursor[1], cursor[2]
     local context = {}
 
-    -- Get 0-indexed row, 0-indexed col for get_node()
+    -- 1. Immediate Check for Table Context (DB.)
+    -- Moved to top to ensure explicit DB typing takes precedence over syntax error fallbacks
+    local line_prefix = get_line_prefix(row_1, col_0)
+    local before_dot_match = line_prefix:match("([%w_]+)%.([%w_]*)$")
+
+    if before_dot_match and utils.is_a_db(before_dot_match) then
+        context.type = 'tables'
+        context.db_name = string.upper(before_dot_match)
+        return context
+    end
+
     local cursor_pos_0 = { row_1 - 1, col_0 }
     local cursor_node = vim.treesitter.get_node({ bufnr = 0, pos = cursor_pos_0 })
 
-    if not cursor_node then
-        return { type = 'databases' }
-    end -- Default
+    if not cursor_node then return { type = 'databases' } end
 
     local statement_node = get_enclosing_or_relevant_preceding_statement(cursor_node, bufnr, row_1 - 1)
-    if not statement_node then
-        return { type = 'databases' }
-    end
-    local s_sr, s_er = node_rows(statement_node)
+    if not statement_node then return { type = 'databases' } end
 
+    local s_sr, s_er = node_rows(statement_node)
     local cursor_error_node = nil
     local e_sr, e_er
     for _, node, _ in Q.has_error:iter_captures(cursor_node, bufnr, 0, -1) do
@@ -486,6 +454,9 @@ function M.analyze_sql_context()
         e_sr, e_er = node_rows(cursor_error_node)
         break
     end
+
+    -- Check if we should fallback to databases due to missing FROM (incomplete query)
+    -- Only if we didn't already match a specific DB. table completion above.
     if cursor_error_node and cursor_error_node ~= statement_node and any_capture(Q.has_last_from, cursor_error_node, bufnr, e_sr, e_er) then
         return { type = 'databases' }
     end
@@ -496,115 +467,97 @@ function M.analyze_sql_context()
     end
 
     local has_where = false
-    for _, node, _ in Q.has_where:iter_captures(statement_node, bufnr, 0, -1) do
-        local s_row, s_col, _, _ = node:start()
-        -- Check if the node starts before the cursor
-        if s_row < row_1 - 1 or (s_row == row_1 - 1 and s_col < col_0) then
-            has_where = true
-            break
-        end
-    end
-    if cursor_error_node and cursor_error_node ~= statement_node then
-        for _, node, _ in Q.has_where:iter_captures(cursor_error_node, bufnr, e_sr, e_er) do
-            local s_row, s_col, _, _ = node:start()
-            -- Check if the node starts before the cursor
+    local check_nodes = { statement_node }
+    if cursor_error_node and cursor_error_node ~= statement_node then table.insert(check_nodes, cursor_error_node) end
+
+    for _, n in ipairs(check_nodes) do
+        for _, node, _ in Q.has_where:iter_captures(n, bufnr, 0, -1) do
+            local s_row, s_col = node:start()
             if s_row < row_1 - 1 or (s_row == row_1 - 1 and s_col < col_0) then
                 has_where = true
                 break
             end
         end
+        if has_where then break end
     end
 
-    -- Get the text immediately preceding the cursor on the current line
-    local line_prefix = get_line_prefix(row_1, col_0)
-
-    local before_dot_match, _ = line_prefix:match("([%w_]+)%.([%w_]*)$")
-
-    if before_dot_match and utils.is_a_db(before_dot_match) then
-        context.type = 'tables'
-        context.db_name = string.upper(before_dot_match)
-        return context
-    end
-
-
-    -- 2. Check for Column Context
     if has_sel_or_dml or has_where then
+        local scope_node = nil
+
         local has_error = false
         for _, _, _ in Q.has_error:iter_captures(statement_node, bufnr, 0, -1) do
             has_error = true
             break
         end
+
         if not has_error then
-            context.tables = find_all_tables_in_scope(statement_node, bufnr)
-            context.buffer_fields = find_all_fields_from_subquery(statement_node, bufnr)
+            -- Standard path: use scope relative to cursor
+            scope_node = get_scope_node(cursor_node) or statement_node
+            context.tables = find_all_tables_in_scope(scope_node, bufnr)
+            context.buffer_fields = find_all_fields_from_subquery(scope_node, bufnr)
         elseif has_sel_or_dml and statement_node then
-            if has_error then
-                -- Find SELECT keyword position in the statement_node
-                local kw_node = nil
-                for child in statement_node:iter_children() do
-                    if child:type() == 'keyword_select' or child:type() == 'select' then
-                        kw_node = child
-                        break
-                    end
+            -- Error path: try to rebuild and parse
+            local kw_node = nil
+            for child in statement_node:iter_children() do
+                if child:type() == 'keyword_select' or child:type() == 'select' then
+                    kw_node = child
+                    break
                 end
+            end
 
+            if kw_node then
+                local modified_buf_text = try_build_parsable_query(bufnr, row_1 - 1, col_0)
+                local lang = "sql"
+                local parser = vim.treesitter.get_string_parser(modified_buf_text, lang)
+                local trees = parser:parse()
 
-                if kw_node then
-                    local modified_buf_text = try_build_parsable_query(bufnr, row_1 - 1, col_0)
+                if trees and #trees > 0 then
+                    local root = trees[1]:root()
+                    local fixed_statement_node = nil
+                    local cursor_pos_in_modified = cursor_pos_0[1]
 
-                    -- Parse the entire modified buffer
-                    local lang = "sql"
-                    local parser = vim.treesitter.get_string_parser(modified_buf_text, lang)
-                    local trees = parser:parse()
-
-                    if trees and #trees > 0 then
-                        local tree = trees[1]
-                        local root = tree:root()
-
-                        -- Find the statement that contains our cursor position
-                        local fixed_statement_node = nil
-                        local cursor_pos_in_modified = cursor_pos_0[1]
-
-                        -- Search for statement containing cursor
-                        local stmt_query = vim.treesitter.query.parse("sql", "(statement) @stmt")
-                        for _, stmt_node, _ in stmt_query:iter_captures(root, modified_buf_text, 0, -1) do
-                            local s_start_row, _, s_end_row, s_end_col = stmt_node:range()
-                            -- Check if cursor is within this statement
-                            if cursor_pos_in_modified >= s_start_row and
-                                (cursor_pos_in_modified < s_end_row or
-                                    (cursor_pos_in_modified == s_end_row and col_0 <= s_end_col)) then
-                                fixed_statement_node = stmt_node
-                                break
-                            end
+                    local stmt_query = vim.treesitter.query.parse("sql", "(statement) @stmt")
+                    for _, stmt_node, _ in stmt_query:iter_captures(root, modified_buf_text, 0, -1) do
+                        local s_start_row, _, s_end_row, s_end_col = stmt_node:range()
+                        if cursor_pos_in_modified >= s_start_row and
+                            (cursor_pos_in_modified < s_end_row or
+                                (cursor_pos_in_modified == s_end_row and col_0 <= s_end_col)) then
+                            fixed_statement_node = stmt_node
+                            break
                         end
+                    end
+                    if not fixed_statement_node and root:named_child_count() > 0 then
+                        fixed_statement_node = root:named_child(0)
+                    end
 
-                        -- Fallback: use first statement if no exact match
-                        if not fixed_statement_node and root:named_child_count() > 0 then
-                            fixed_statement_node = root:named_child(0)
-                        end
+                    if fixed_statement_node and fixed_statement_node:type() == 'statement' then
+                        -- Identify scope in the modified tree
+                        local node_at_cursor = fixed_statement_node:named_descendant_for_range(row_1 - 1, col_0,
+                            row_1 - 1, col_0)
+                        scope_node = get_scope_node(node_at_cursor) or fixed_statement_node
 
-                        if fixed_statement_node and fixed_statement_node:type() == 'statement' then
-                            context.tables = find_all_tables_in_scope(fixed_statement_node, modified_buf_text)
-                            context.buffer_fields = find_all_fields_from_subquery(fixed_statement_node, modified_buf_text)
-                        end
+                        context.tables = find_all_tables_in_scope(scope_node, modified_buf_text)
+                        context.buffer_fields = find_all_fields_from_subquery(scope_node, modified_buf_text)
                     end
                 end
             end
         end
-        if context.tables and #context.tables == 0 and context.buffer_fields and #context.buffer_fields == 0 then
+
+        -- Fallback if no tables found (e.g. invalid query structure or DML like insert/update without FROM)
+        if (not context.tables or #context.tables == 0) and (not context.buffer_fields or #context.buffer_fields == 0) then
             if cursor_error_node then
                 for _, _, _ in Q.has_last_from:iter_captures(cursor_error_node, bufnr, e_sr, e_er) do
                     return { type = 'databases' }
                 end
             end
-            context.tables = find_all_object_reference(statement_node, bufnr)
-            context.buffer_fields = find_all_fields_from_subquery(statement_node, bufnr)
+            scope_node = scope_node or statement_node
+            context.tables = find_all_object_reference(scope_node, bufnr)
+            context.buffer_fields = find_all_fields_from_subquery(scope_node, bufnr)
         end
+
         if (context.tables and #context.tables > 0) or (context.buffer_fields and #context.buffer_fields > 0) then
             context.type = 'columns'
             context.is_where = has_where
-
-
             if before_dot_match then
                 context.alias_prefix = string.upper(before_dot_match)
             end
