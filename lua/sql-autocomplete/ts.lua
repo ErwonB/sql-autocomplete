@@ -2,6 +2,44 @@ local utils = require('sql-autocomplete.utils')
 
 local M = {}
 
+---
+--- Dynamic Keyword Extraction
+---
+local _cached_keywords = nil
+
+local function get_sql_keywords()
+    if _cached_keywords then return _cached_keywords end
+
+    local keywords = {}
+    local unique_map = {}
+
+    local lang_inspect = vim.treesitter.language.inspect
+    if not lang_inspect then
+        return {}
+    end
+
+    local symbols = lang_inspect('sql')
+
+    for name, is_named in pairs(symbols.symbols) do
+        local word = nil
+
+        if is_named and name:match("^keyword_") then
+            word = name:gsub("^keyword_", "")
+        end
+
+        if word then
+            local lower = word:lower()
+            if not unique_map[lower] then
+                unique_map[lower] = true
+                table.insert(keywords, lower)
+            end
+        end
+    end
+
+    _cached_keywords = keywords
+    return keywords
+end
+
 -- Helper to check if a node is the last child of its parent
 local function is_last_child(node)
     if not node then return false end
@@ -103,7 +141,7 @@ local function get_scope_node(node)
 end
 
 ---
---- Checks if a node is a direct descendant of the scope node,
+--- Checks if a node is a direct descendant of the scope node
 --- meaning it is not nested inside another intermediate subquery.
 --- @param node table The node to check (e.g., a relation).
 --- @param scope_node table The defining scope (subquery or statement).
@@ -203,7 +241,6 @@ local function get_child_by_field_name(node, field_name)
     end
     return nil
 end
-
 
 ---
 --- Try to build parsable query with dummy field
@@ -428,7 +465,6 @@ function M.analyze_sql_context()
     local context = {}
 
     -- 1. Immediate Check for Table Context (DB.)
-    -- Moved to top to ensure explicit DB typing takes precedence over syntax error fallbacks
     local line_prefix = get_line_prefix(row_1, col_0)
     local before_dot_match = line_prefix:match("([%w_]+)%.([%w_]*)$")
 
@@ -441,10 +477,18 @@ function M.analyze_sql_context()
     local cursor_pos_0 = { row_1 - 1, col_0 }
     local cursor_node = vim.treesitter.get_node({ bufnr = 0, pos = cursor_pos_0 })
 
-    if not cursor_node then return { type = 'databases' } end
+    if not cursor_node then
+        context.type = 'keywords'
+        context.candidates = get_sql_keywords()
+        return context
+    end
 
     local statement_node = get_enclosing_or_relevant_preceding_statement(cursor_node, bufnr, row_1 - 1)
-    if not statement_node then return { type = 'databases' } end
+    if not statement_node then
+        context.type = 'keywords'
+        context.candidates = get_sql_keywords()
+        return context
+    end
 
     local s_sr, s_er = node_rows(statement_node)
     local cursor_error_node = nil
@@ -458,6 +502,9 @@ function M.analyze_sql_context()
     -- Check if we should fallback to databases due to missing FROM (incomplete query)
     -- Only if we didn't already match a specific DB. table completion above.
     if cursor_error_node and cursor_error_node ~= statement_node and any_capture(Q.has_last_from, cursor_error_node, bufnr, e_sr, e_er) then
+        return { type = 'databases' }
+    end
+    if not cursor_error_node and any_capture(Q.has_last_from, statement_node, bufnr, e_sr, e_er) then
         return { type = 'databases' }
     end
 
@@ -565,8 +612,9 @@ function M.analyze_sql_context()
         end
     end
 
-    -- 3. Default to Database Context
-    context.type = 'databases'
+    -- 3. Default to Dynamic Keyword Context
+    context.type = 'keywords'
+    context.candidates = get_sql_keywords()
     return context
 end
 

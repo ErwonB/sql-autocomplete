@@ -91,6 +91,8 @@ function M.complete_manual(findstart)
             res = utils.get_tables(context.db_name)
         elseif context.type == 'databases' then
             res = utils.get_databases()
+        elseif context.type == 'keywords' then
+            res = context.candidates
         end
         items = res and res or {}
 
@@ -166,6 +168,8 @@ function M.complete_func(findstart, base)
             res = utils.get_tables(context.db_name)
         elseif context.type == 'databases' then
             res = utils.get_databases()
+        elseif context.type == 'keywords' then
+            res = context.candidates
         end
         items = res and res or {}
 
