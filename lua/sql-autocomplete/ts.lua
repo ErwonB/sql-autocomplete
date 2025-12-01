@@ -7,7 +7,7 @@ local M = {}
 ---
 local _cached_keywords = nil
 
-local function get_sql_keywords()
+function M.get_sql_keywords()
     if _cached_keywords then return _cached_keywords end
 
     local keywords = {}
@@ -479,14 +479,14 @@ function M.analyze_sql_context()
 
     if not cursor_node then
         context.type = 'keywords'
-        context.candidates = get_sql_keywords()
+        context.candidates = M.get_sql_keywords()
         return context
     end
 
     local statement_node = get_enclosing_or_relevant_preceding_statement(cursor_node, bufnr, row_1 - 1)
     if not statement_node then
         context.type = 'keywords'
-        context.candidates = get_sql_keywords()
+        context.candidates = M.get_sql_keywords()
         return context
     end
 
@@ -614,7 +614,7 @@ function M.analyze_sql_context()
 
     -- 3. Default to Dynamic Keyword Context
     context.type = 'keywords'
-    context.candidates = get_sql_keywords()
+    context.candidates = M.get_sql_keywords()
     return context
 end
 
