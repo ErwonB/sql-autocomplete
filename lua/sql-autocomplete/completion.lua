@@ -185,7 +185,7 @@ function M.complete_func(findstart, base)
             })
         end
 
-        -- If Context is Columns, Inject Keywords with Lower Priority
+        -- If Context is Columns, Inject Keywords and functions with Lower Priority
         if context.type == 'columns' then
             local keywords = ts.get_sql_keywords()
             for _, kw in ipairs(keywords) do
@@ -194,6 +194,10 @@ function M.complete_func(findstart, base)
                     sortText = "2_" .. kw,
                     label = kw,
                 })
+            end
+            local td_functions = require("sql-autocomplete.td_functions_completion")
+            for _, kw in ipairs(td_functions) do
+                table.insert(raw_items, kw)
             end
         end
 
