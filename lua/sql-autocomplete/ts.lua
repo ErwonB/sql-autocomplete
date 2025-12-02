@@ -82,7 +82,7 @@ local Q = {
     (ERROR) @error
   ]]),
     has_last_from = vim.treesitter.query.parse("sql",
-        [[([(from) (join) (keyword_from) (keyword_join)] @from (#any-last? @from))]]),
+        [[([(keyword_from) (keyword_join)] @from (#any-last? @from))]]),
     subq_with_alias = vim.treesitter.query.parse("sql", [[
     (relation
       (subquery) @subquery
