@@ -76,7 +76,7 @@ return {
             value = [[**aivector**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -89,7 +89,7 @@ return {
             value = [[**anova_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -115,7 +115,7 @@ return {
             value = [[**antiselect_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -141,7 +141,7 @@ return {
             value = [[**api_request_contract**
 
 **Signatures:**
-- [DB: td_tapidb] 0 parameters (Types: `?`)]]
+- [DB: td_tapidb] 0 parameter]]
         }
     },
     {
@@ -167,7 +167,7 @@ return {
             value = [[**apply_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -506,7 +506,7 @@ return {
             value = [[**arrayvec**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -584,7 +584,7 @@ return {
             value = [[**attribution_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -732,7 +732,7 @@ return {
             value = [[**byomcachemgr_contract**
 
 **Signatures:**
-- [DB: mldb] 0 parameters (Types: `?`)]]
+- [DB: mldb] 0 parameter]]
         }
     },
     {
@@ -786,7 +786,7 @@ return {
             value = [[**calcmatrix_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -865,7 +865,7 @@ return {
             value = [[**chisq_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -891,7 +891,7 @@ return {
             value = [[**chisquaremap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -917,7 +917,7 @@ return {
             value = [[**chisquarereduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -931,6 +931,19 @@ return {
 
 **Signatures:**
 - [DB: TD_SYSFNLIB] 1 parameter (Types: `N`)]]
+        }
+    },
+    {
+        label = "coalesce",
+        sortText = "3_coalesce",
+        kind = require("blink.cmp.types").CompletionItemKind.Function,
+        detail = "Scalar Function (1 variant)",
+        documentation = {
+            kind = "markdown",
+            value = [[**coalesce**
+
+**Signatures:**
+- n parameters (Types: `++++...`)]]
         }
     },
     {
@@ -956,7 +969,7 @@ return {
             value = [[**colsummap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -982,7 +995,7 @@ return {
             value = [[**colsumreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1141,7 +1154,7 @@ return {
             value = [[**dataikupredict_contract**
 
 **Signatures:**
-- [DB: mldb] 0 parameters (Types: `?`)]]
+- [DB: mldb] 0 parameter]]
         }
     },
     {
@@ -1167,7 +1180,7 @@ return {
             value = [[**datarobotpredict_contract**
 
 **Signatures:**
-- [DB: mldb] 0 parameters (Types: `?`)]]
+- [DB: mldb] 0 parameter]]
         }
     },
     {
@@ -1398,7 +1411,7 @@ return {
             value = [[**decisionforestpred_i_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1424,7 +1437,7 @@ return {
             value = [[**decisionforestpredict_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1450,7 +1463,7 @@ return {
             value = [[**decisiontreepredict_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1639,7 +1652,7 @@ return {
             value = [[**fpfanovamap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1665,7 +1678,7 @@ return {
             value = [[**fpfanovareduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1691,7 +1704,7 @@ return {
             value = [[**fpfftestmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1717,7 +1730,7 @@ return {
             value = [[**fpfftestreducer_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1743,7 +1756,7 @@ return {
             value = [[**fpfhypothesisprep_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1808,7 +1821,7 @@ return {
             value = [[**fpfztestmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1834,7 +1847,7 @@ return {
             value = [[**fpfztestreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1886,7 +1899,7 @@ return {
             value = [[**fsysshowblocks_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1912,7 +1925,7 @@ return {
             value = [[**fsysshowcompress_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1951,7 +1964,7 @@ return {
             value = [[**fsysshowofsspace_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1977,7 +1990,7 @@ return {
             value = [[**fsysshowwhere_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -1990,7 +2003,7 @@ return {
             value = [[**ftest_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -2127,7 +2140,7 @@ return {
             value = [[**getcolumns_contract**
 
 **Signatures:**
-- [DB: SYSLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSLIB] 0 parameter]]
         }
     },
     {
@@ -2299,7 +2312,7 @@ return {
             value = [[**glmpredictcontract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -2312,7 +2325,7 @@ return {
             value = [[**glmpredictpersegment_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -2360,7 +2373,7 @@ return {
             value = [[**h2opredict_contract**
 
 **Signatures:**
-- [DB: mldb] 0 parameters (Types: `?`)]]
+- [DB: mldb] 0 parameter]]
         }
     },
     {
@@ -2479,7 +2492,7 @@ return {
             value = [[**internalperioddatetype**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -2492,7 +2505,7 @@ return {
             value = [[**internalperiodtimestamptype**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -2505,7 +2518,7 @@ return {
             value = [[**internalperiodtimestampwtztype**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -2518,7 +2531,7 @@ return {
             value = [[**internalperiodtimetype**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -2531,7 +2544,7 @@ return {
             value = [[**internalperiodtimewtztype**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -2713,7 +2726,7 @@ return {
             value = [[**jvmmemstats_contract**
 
 **Signatures:**
-- [DB: mldb] 0 parameters (Types: `?`)]]
+- [DB: mldb] 0 parameter]]
         }
     },
     {
@@ -2726,7 +2739,7 @@ return {
             value = [[**knn_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -2752,7 +2765,7 @@ return {
             value = [[**knnreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -2791,6 +2804,19 @@ return {
         }
     },
     {
+        label = "left",
+        sortText = "3_left",
+        kind = require("blink.cmp.types").CompletionItemKind.Function,
+        detail = "Scalar Function (1 variant)",
+        documentation = {
+            kind = "markdown",
+            value = [[**left**
+
+**Signatures:**
+- 2 parameters (Types: `++I8`)]]
+        }
+    },
+    {
         label = "length",
         sortText = "3_length",
         kind = require("blink.cmp.types").CompletionItemKind.Function,
@@ -2801,6 +2827,19 @@ return {
 
 **Signatures:**
 - [DB: TD_SYSFNLIB] 1 parameter (Types: `++`)]]
+        }
+    },
+    {
+        label = "lower",
+        sortText = "3_lower",
+        kind = require("blink.cmp.types").CompletionItemKind.Function,
+        detail = "Scalar Function (1 variant)",
+        documentation = {
+            kind = "markdown",
+            value = [[**lower**
+
+**Signatures:**
+- 1 parameter (Types: `++`)]]
         }
     },
     {
@@ -2893,7 +2932,7 @@ return {
             value = [[**mbb**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -2906,7 +2945,7 @@ return {
             value = [[**mbr**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -3266,7 +3305,7 @@ return {
             value = [[**movingaverage_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -3279,7 +3318,7 @@ return {
             value = [[**mybigdeciarray**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -3292,7 +3331,7 @@ return {
             value = [[**naivebayescontract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -3331,7 +3370,7 @@ return {
             value = [[**nbtclassifierpredictcontract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -3384,7 +3423,7 @@ return {
             value = [[**ngramsplitter_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -3412,6 +3451,32 @@ return {
 
 **Signatures:**
 - [DB: TD_SYSFNLIB] 0 parameters]]
+        }
+    },
+    {
+        label = "nullif",
+        sortText = "3_nullif",
+        kind = require("blink.cmp.types").CompletionItemKind.Function,
+        detail = "Scalar Function (1 variant)",
+        documentation = {
+            kind = "markdown",
+            value = [[**nullif**
+
+**Signatures:**
+- 2 parameters (Types: `++++`)]]
+        }
+    },
+    {
+        label = "nullifzero",
+        sortText = "3_nullifzero",
+        kind = require("blink.cmp.types").CompletionItemKind.Function,
+        detail = "Scalar Function (1 variant)",
+        documentation = {
+            kind = "markdown",
+            value = [[**nullifzero**
+
+**Signatures:**
+- 1 parameter (Types: `++`)]]
         }
     },
     {
@@ -3613,7 +3678,7 @@ return {
             value = [[**ofsreadmetadata_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -3691,7 +3756,7 @@ return {
             value = [[**onnxembeddings_contract**
 
 **Signatures:**
-- [DB: mldb] 0 parameters (Types: `?`)]]
+- [DB: mldb] 0 parameter]]
         }
     },
     {
@@ -3717,7 +3782,7 @@ return {
             value = [[**onnxpredict_contract**
 
 **Signatures:**
-- [DB: mldb] 0 parameters (Types: `?`)]]
+- [DB: mldb] 0 parameter]]
         }
     },
     {
@@ -3743,7 +3808,7 @@ return {
             value = [[**onnxseq2seq_contract**
 
 **Signatures:**
-- [DB: mldb] 0 parameters (Types: `?`)]]
+- [DB: mldb] 0 parameter]]
         }
     },
     {
@@ -3823,7 +3888,7 @@ return {
             value = [[**pack_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -3862,7 +3927,7 @@ return {
             value = [[**pmmlpredict_contract**
 
 **Signatures:**
-- [DB: mldb] 0 parameters (Types: `?`)]]
+- [DB: mldb] 0 parameter]]
         }
     },
     {
@@ -3942,7 +4007,7 @@ return {
             value = [[**qgexecuteforeignquerycontract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -3968,7 +4033,7 @@ return {
             value = [[**qginitiatorexportcontract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -3994,7 +4059,7 @@ return {
             value = [[**qginitiatorimportcontract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4020,7 +4085,7 @@ return {
             value = [[**qgremoteexportcontract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4046,7 +4111,7 @@ return {
             value = [[**qgremoteimportcontract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4115,7 +4180,7 @@ return {
             value = [[**read_nos_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4219,6 +4284,19 @@ return {
 
 **Signatures:**
 - [DB: TD_SYSFNLIB] 1 parameter (Types: `++`)]]
+        }
+    },
+    {
+        label = "right",
+        sortText = "3_right",
+        kind = require("blink.cmp.types").CompletionItemKind.Function,
+        detail = "Scalar Function (1 variant)",
+        documentation = {
+            kind = "markdown",
+            value = [[**right**
+
+**Signatures:**
+- 2 parameters (Types: `++I8`)]]
         }
     },
     {
@@ -4359,7 +4437,7 @@ return {
             value = [[**sessionize_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4624,7 +4702,7 @@ return {
             value = [[**st_geometry**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -4682,7 +4760,7 @@ return {
             value = [[**stringsimilarity_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4729,6 +4807,34 @@ return {
         }
     },
     {
+        label = "substr",
+        sortText = "3_substr",
+        kind = require("blink.cmp.types").CompletionItemKind.Function,
+        detail = "Scalar Function (2 variants)",
+        documentation = {
+            kind = "markdown",
+            value = [[**substr**
+
+**Signatures:**
+- 2 parameters (Types: `++I`)
+- 3 parameters (Types: `++II`)]]
+        }
+    },
+    {
+        label = "substring",
+        sortText = "3_substring",
+        kind = require("blink.cmp.types").CompletionItemKind.Function,
+        detail = "Scalar Function (2 variants)",
+        documentation = {
+            kind = "markdown",
+            value = [[**substring**
+
+**Signatures:**
+- 2 parameters (Types: `++I`)
+- 3 parameters (Types: `++II`)]]
+        }
+    },
+    {
         label = "svmsparsepredict",
         sortText = "3_svmsparsepredict",
         kind = require("blink.cmp.types").CompletionItemKind.Function,
@@ -4751,7 +4857,7 @@ return {
             value = [[**svmsparsepredict_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4790,7 +4896,7 @@ return {
             value = [[**td_avro**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -4855,7 +4961,7 @@ return {
             value = [[**td_betaencoderdriver_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4881,7 +4987,7 @@ return {
             value = [[**td_betaencodermap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4907,7 +5013,7 @@ return {
             value = [[**td_betaencoderreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4933,7 +5039,7 @@ return {
             value = [[**td_bincodefit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4959,7 +5065,7 @@ return {
             value = [[**td_bincodefitemap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -4985,7 +5091,7 @@ return {
             value = [[**td_bincodefitereduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5011,7 +5117,7 @@ return {
             value = [[**td_bincodefitv_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5037,7 +5143,7 @@ return {
             value = [[**td_bincodetransform_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5076,7 +5182,7 @@ return {
             value = [[**td_categoricalsummary_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5102,7 +5208,7 @@ return {
             value = [[**td_catsuminternal_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5141,7 +5247,7 @@ return {
             value = [[**td_classevalmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5167,7 +5273,7 @@ return {
             value = [[**td_classevalreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5193,7 +5299,7 @@ return {
             value = [[**td_classificationevaluator_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5219,7 +5325,7 @@ return {
             value = [[**td_cloudstatus_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5258,7 +5364,7 @@ return {
             value = [[**td_columnsummary_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5284,7 +5390,7 @@ return {
             value = [[**td_columnsummarymap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5310,7 +5416,7 @@ return {
             value = [[**td_columnsummaryreduce_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5336,7 +5442,7 @@ return {
             value = [[**td_columntransformer_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5375,7 +5481,7 @@ return {
             value = [[**td_converttableforuaf_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5401,7 +5507,7 @@ return {
             value = [[**td_convertto_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5414,7 +5520,7 @@ return {
             value = [[**td_csvlatin**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -5427,7 +5533,7 @@ return {
             value = [[**td_csvunicode**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -5587,7 +5693,7 @@ return {
             value = [[**td_decisionforest_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5613,7 +5719,7 @@ return {
             value = [[**td_decisionforestpredict_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5639,7 +5745,7 @@ return {
             value = [[**td_densescaletransform_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5665,7 +5771,7 @@ return {
             value = [[**td_dfpinternal_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5691,7 +5797,7 @@ return {
             value = [[**td_dirichletencoderdriver_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5717,7 +5823,7 @@ return {
             value = [[**td_dirichletencodermap_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5743,7 +5849,7 @@ return {
             value = [[**td_dirichletencoderreduce_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5809,7 +5915,7 @@ return {
             value = [[**td_fillrowid_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5835,7 +5941,7 @@ return {
             value = [[**td_fpfqqnorm_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5888,7 +5994,7 @@ return {
             value = [[**td_functionfit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5914,7 +6020,7 @@ return {
             value = [[**td_functionfiti_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -5940,7 +6046,7 @@ return {
             value = [[**td_functiontransform_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6031,7 +6137,7 @@ return {
             value = [[**td_getcstinfo_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6057,7 +6163,7 @@ return {
             value = [[**td_getdistinctcount_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6096,7 +6202,7 @@ return {
             value = [[**td_getfutilecolumns_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6122,7 +6228,7 @@ return {
             value = [[**td_getfutileinternal_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6148,7 +6254,7 @@ return {
             value = [[**td_getmetadata_con**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6200,7 +6306,7 @@ return {
             value = [[**td_getsample_con**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6292,7 +6398,7 @@ return {
             value = [[**td_getunion_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6318,7 +6424,7 @@ return {
             value = [[**td_getunionmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6344,7 +6450,7 @@ return {
             value = [[**td_getunionreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6370,7 +6476,7 @@ return {
             value = [[**td_gigencoderdriver_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6396,7 +6502,7 @@ return {
             value = [[**td_gigencodermap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6422,7 +6528,7 @@ return {
             value = [[**td_gigencoderreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6448,7 +6554,7 @@ return {
             value = [[**td_glm_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6474,7 +6580,7 @@ return {
             value = [[**td_glm_internal_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6513,7 +6619,7 @@ return {
             value = [[**td_glmpred_internal_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6539,7 +6645,7 @@ return {
             value = [[**td_glmpredict_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6565,7 +6671,7 @@ return {
             value = [[**td_glmsegment_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6591,7 +6697,7 @@ return {
             value = [[**td_histogram_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6617,7 +6723,7 @@ return {
             value = [[**td_histogrammap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6643,7 +6749,7 @@ return {
             value = [[**td_histogramprep_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6669,7 +6775,7 @@ return {
             value = [[**td_histogramreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6695,7 +6801,7 @@ return {
             value = [[**td_history_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6721,7 +6827,7 @@ return {
             value = [[**td_image2matrix_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6773,7 +6879,7 @@ return {
             value = [[**td_json_bson**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -6799,7 +6905,7 @@ return {
             value = [[**td_json_shred_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6812,7 +6918,7 @@ return {
             value = [[**td_json_ubjson**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -6825,7 +6931,7 @@ return {
             value = [[**td_jsonlatin_lob**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -6851,7 +6957,7 @@ return {
             value = [[**td_jsonunicode_lob**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -6877,7 +6983,7 @@ return {
             value = [[**td_kmeans_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6903,7 +7009,7 @@ return {
             value = [[**td_kmeansdriver_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6929,7 +7035,7 @@ return {
             value = [[**td_kmeansdrivercall_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6955,7 +7061,7 @@ return {
             value = [[**td_kmeansmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -6981,7 +7087,7 @@ return {
             value = [[**td_kmeanspredict_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7007,7 +7113,7 @@ return {
             value = [[**td_kmeansreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7059,7 +7165,7 @@ return {
             value = [[**td_localsgdmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7085,7 +7191,7 @@ return {
             value = [[**td_localsgdreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7137,7 +7243,7 @@ return {
             value = [[**td_manifests_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7286,7 +7392,7 @@ return {
             value = [[**td_naivebayes_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7312,7 +7418,7 @@ return {
             value = [[**td_naivebayesmap_d_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7338,7 +7444,7 @@ return {
             value = [[**td_naivebayesmap_s_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7364,7 +7470,7 @@ return {
             value = [[**td_naivebayespredict_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7390,7 +7496,7 @@ return {
             value = [[**td_naivebayespredict_d_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7416,7 +7522,7 @@ return {
             value = [[**td_naivebayespredict_s_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7442,7 +7548,7 @@ return {
             value = [[**td_naivebayesreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7468,7 +7574,7 @@ return {
             value = [[**td_naivebayesreduceinit_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7494,7 +7600,7 @@ return {
             value = [[**td_naivebayesreducetop_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7546,7 +7652,7 @@ return {
             value = [[**td_nbtccardinality_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7572,7 +7678,7 @@ return {
             value = [[**td_nbtccardinalitymap_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7598,7 +7704,7 @@ return {
             value = [[**td_nbtccardinalityreduce_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7624,7 +7730,7 @@ return {
             value = [[**td_nbtcclassitems_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7650,7 +7756,7 @@ return {
             value = [[**td_nbtcclassitemsinternal_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7663,7 +7769,7 @@ return {
             value = [[**td_nbtcpredict_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7676,7 +7782,7 @@ return {
             value = [[**td_nbtctrainer_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7702,7 +7808,7 @@ return {
             value = [[**td_nbtctrainerinternal_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7728,7 +7834,7 @@ return {
             value = [[**td_nonlinearcombinefit_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7741,7 +7847,7 @@ return {
             value = [[**td_nonlinearcombinetrans_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7780,7 +7886,7 @@ return {
             value = [[**td_nonnullcntmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7806,7 +7912,7 @@ return {
             value = [[**td_nonnullcntreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7871,7 +7977,7 @@ return {
             value = [[**td_numapply_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7897,7 +8003,7 @@ return {
             value = [[**td_oneclasssvm_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7923,7 +8029,7 @@ return {
             value = [[**td_oneclasssvmpredict_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7949,7 +8055,7 @@ return {
             value = [[**td_onehotencodingfit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -7975,7 +8081,7 @@ return {
             value = [[**td_onehotencodingfit_dr_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8001,7 +8107,7 @@ return {
             value = [[**td_onehotencodingfit_s_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8027,7 +8133,7 @@ return {
             value = [[**td_onehotencodingfitmap_c**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8040,7 +8146,7 @@ return {
             value = [[**td_onehotencodingtran_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8066,7 +8172,7 @@ return {
             value = [[**td_onehotencodingtran_d_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8092,7 +8198,7 @@ return {
             value = [[**td_onehotencodingtran_s_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8144,7 +8250,7 @@ return {
             value = [[**td_ordencfitmapinternal2_c**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8157,7 +8263,7 @@ return {
             value = [[**td_ordencfitmapinternal_c**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8183,7 +8289,7 @@ return {
             value = [[**td_orderedstats_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8209,7 +8315,7 @@ return {
             value = [[**td_ordinalencodingfit_c**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8235,7 +8341,7 @@ return {
             value = [[**td_ordinalencodingfitmap_c**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8261,7 +8367,7 @@ return {
             value = [[**td_ordinalencodingfitreduce_c**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8287,7 +8393,7 @@ return {
             value = [[**td_ordinaltransform_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8326,7 +8432,7 @@ return {
             value = [[**td_outlierfit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8352,7 +8458,7 @@ return {
             value = [[**td_outlierinternal_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8365,7 +8471,7 @@ return {
             value = [[**td_outliertransform_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8391,7 +8497,7 @@ return {
             value = [[**td_partitions_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8417,7 +8523,7 @@ return {
             value = [[**td_pivoting_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8456,7 +8562,7 @@ return {
             value = [[**td_polynomialfit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8469,7 +8575,7 @@ return {
             value = [[**td_polytransform_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8495,7 +8601,7 @@ return {
             value = [[**td_qqnorm_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8603,7 +8709,7 @@ return {
             value = [[**td_randprojfit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8629,7 +8735,7 @@ return {
             value = [[**td_randprojfitmap_ctrct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8655,7 +8761,7 @@ return {
             value = [[**td_randprojfitreduce_ctrct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8668,7 +8774,7 @@ return {
             value = [[**td_randprojmincomp_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8681,7 +8787,7 @@ return {
             value = [[**td_randprojtransform_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8707,7 +8813,7 @@ return {
             value = [[**td_regevalmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8733,7 +8839,7 @@ return {
             value = [[**td_regevalprep_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8759,7 +8865,7 @@ return {
             value = [[**td_regevalreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8785,7 +8891,7 @@ return {
             value = [[**td_regressionevaluator_c**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8824,7 +8930,7 @@ return {
             value = [[**td_roc_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8850,7 +8956,7 @@ return {
             value = [[**td_rocmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8876,7 +8982,7 @@ return {
             value = [[**td_rocreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8902,7 +9008,7 @@ return {
             value = [[**td_roundcolumns_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8928,7 +9034,7 @@ return {
             value = [[**td_rownormalizefit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8954,7 +9060,7 @@ return {
             value = [[**td_rownormalizetransform_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8967,7 +9073,7 @@ return {
             value = [[**td_rowswithmisval_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -8980,7 +9086,7 @@ return {
             value = [[**td_rowswithoutmisval_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9020,7 +9126,7 @@ return {
             value = [[**td_scalebypartitionfit_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9046,7 +9152,7 @@ return {
             value = [[**td_scalefit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9072,7 +9178,7 @@ return {
             value = [[**td_scalefitmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9111,7 +9217,7 @@ return {
             value = [[**td_scalefitreduce0_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9124,7 +9230,7 @@ return {
             value = [[**td_scalefitreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9150,7 +9256,7 @@ return {
             value = [[**td_scaletransform_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9176,7 +9282,7 @@ return {
             value = [[**td_senextinternal_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9202,7 +9308,7 @@ return {
             value = [[**td_sentimentextractor_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9280,7 +9386,7 @@ return {
             value = [[**td_sgddriver_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9306,7 +9412,7 @@ return {
             value = [[**td_sgdmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9332,7 +9438,7 @@ return {
             value = [[**td_sgdreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9358,7 +9464,7 @@ return {
             value = [[**td_shap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9384,7 +9490,7 @@ return {
             value = [[**td_shapley_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9410,7 +9516,7 @@ return {
             value = [[**td_silhouette_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9436,7 +9542,7 @@ return {
             value = [[**td_silhouettemap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9462,7 +9568,7 @@ return {
             value = [[**td_silhouettereduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9488,7 +9594,7 @@ return {
             value = [[**td_simpleimputefit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9514,7 +9620,7 @@ return {
             value = [[**td_simpleimputefitmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9540,7 +9646,7 @@ return {
             value = [[**td_simpleimputefitred_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9566,7 +9672,7 @@ return {
             value = [[**td_simpleimputetransform_con**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9592,7 +9698,7 @@ return {
             value = [[**td_smote_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9618,7 +9724,7 @@ return {
             value = [[**td_smotemap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9644,7 +9750,7 @@ return {
             value = [[**td_smotencmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9670,7 +9776,7 @@ return {
             value = [[**td_smotencreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9696,7 +9802,7 @@ return {
             value = [[**td_smotereduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9722,7 +9828,7 @@ return {
             value = [[**td_snapshots_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9748,7 +9854,7 @@ return {
             value = [[**td_sparsescalefit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9787,7 +9893,7 @@ return {
             value = [[**td_sparsescalefitrw1_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9813,7 +9919,7 @@ return {
             value = [[**td_sparsescalefitrw2_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9826,7 +9932,7 @@ return {
             value = [[**td_sparsescalefitrw_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9852,7 +9958,7 @@ return {
             value = [[**td_sparsescaletransform_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9917,7 +10023,7 @@ return {
             value = [[**td_sprsclgblstatmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9943,7 +10049,7 @@ return {
             value = [[**td_sprsclgblstatred_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9969,7 +10075,7 @@ return {
             value = [[**td_srdriver_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -9995,7 +10101,7 @@ return {
             value = [[**td_stepwiseregression_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10021,7 +10127,7 @@ return {
             value = [[**td_strapply_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10100,7 +10206,7 @@ return {
             value = [[**td_svm_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10126,7 +10232,7 @@ return {
             value = [[**td_svmpredict_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10152,7 +10258,7 @@ return {
             value = [[**td_targetencodingfit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10178,7 +10284,7 @@ return {
             value = [[**td_targetencodingfitcall1_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10204,7 +10310,7 @@ return {
             value = [[**td_targetencodingfitcall2_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10230,7 +10336,7 @@ return {
             value = [[**td_targetencodingtransform_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10256,7 +10362,7 @@ return {
             value = [[**td_textparser_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10282,7 +10388,7 @@ return {
             value = [[**td_tfidf_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10308,7 +10414,7 @@ return {
             value = [[**td_tfidfmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10334,7 +10440,7 @@ return {
             value = [[**td_tfidfreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10360,7 +10466,7 @@ return {
             value = [[**td_tfidfreg_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10439,7 +10545,7 @@ return {
             value = [[**td_traintestsplit_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10465,7 +10571,7 @@ return {
             value = [[**td_ttsmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10491,7 +10597,7 @@ return {
             value = [[**td_ttsreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10517,7 +10623,7 @@ return {
             value = [[**td_ttsstratifymap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10543,7 +10649,7 @@ return {
             value = [[**td_ttsstratifyreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10635,7 +10741,7 @@ return {
             value = [[**td_univariatestatistics_ct**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10661,7 +10767,7 @@ return {
             value = [[**td_univprecompute_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10687,7 +10793,7 @@ return {
             value = [[**td_univstatsmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10713,7 +10819,7 @@ return {
             value = [[**td_univstatsreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10739,7 +10845,7 @@ return {
             value = [[**td_unorderedstats_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10765,7 +10871,7 @@ return {
             value = [[**td_unpivot_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10791,7 +10897,7 @@ return {
             value = [[**td_unpivoting_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10817,7 +10923,7 @@ return {
             value = [[**td_vecdistmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10843,7 +10949,7 @@ return {
             value = [[**td_vecdistreduce_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10869,7 +10975,7 @@ return {
             value = [[**td_vecdistrw2_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10895,7 +11001,7 @@ return {
             value = [[**td_vectordistance_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -10921,7 +11027,7 @@ return {
             value = [[**td_vectornormalize_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -11045,7 +11151,7 @@ return {
             value = [[**td_whichmax_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -11071,7 +11177,7 @@ return {
             value = [[**td_whichmin_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -11097,7 +11203,7 @@ return {
             value = [[**td_wordembeddings_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -11123,7 +11229,7 @@ return {
             value = [[**td_wordembeddingsmap_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -11149,7 +11255,7 @@ return {
             value = [[**td_wordembeddingsred_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -11175,7 +11281,7 @@ return {
             value = [[**td_wordembeddingstp_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -11201,7 +11307,7 @@ return {
             value = [[**td_xgboost_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -11227,7 +11333,7 @@ return {
             value = [[**td_xgboostpredict_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -11253,7 +11359,7 @@ return {
             value = [[**td_xgbpinternal_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -11334,7 +11440,7 @@ return {
             value = [[**tda_dt_calc_contract**
 
 **Signatures:**
-- [DB: val] 0 parameters (Types: `?`)]]
+- [DB: val] 0 parameter]]
         }
     },
     {
@@ -11360,7 +11466,7 @@ return {
             value = [[**tda_kmeans_contract**
 
 **Signatures:**
-- [DB: val] 0 parameters (Types: `?`)]]
+- [DB: val] 0 parameter]]
         }
     },
     {
@@ -11386,7 +11492,7 @@ return {
             value = [[**tdampcopy_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -11899,6 +12005,19 @@ return {
         }
     },
     {
+        label = "ucase",
+        sortText = "3_ucase",
+        kind = require("blink.cmp.types").CompletionItemKind.Function,
+        detail = "Scalar Function (1 variant)",
+        documentation = {
+            kind = "markdown",
+            value = [[**ucase**
+
+**Signatures:**
+- 1 parameter (Types: `++`)]]
+        }
+    },
+    {
         label = "udfconcat",
         sortText = "3_udfconcat",
         kind = require("blink.cmp.types").CompletionItemKind.Function,
@@ -11909,6 +12028,19 @@ return {
 
 **Signatures:**
 - [DB: TDStats] 1 parameter (Types: `CV`)]]
+        }
+    },
+    {
+        label = "upper",
+        sortText = "3_upper",
+        kind = require("blink.cmp.types").CompletionItemKind.Function,
+        detail = "Scalar Function (1 variant)",
+        documentation = {
+            kind = "markdown",
+            value = [[**upper**
+
+**Signatures:**
+- 1 parameter (Types: `++`)]]
         }
     },
     {
@@ -11950,7 +12082,7 @@ return {
             value = [[**unpack_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -12077,7 +12209,7 @@ return {
             value = [[**xgboost_internal_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
         }
     },
     {
@@ -12090,7 +12222,7 @@ return {
             value = [[**xml**
 
 **Signatures:**
-- [DB: SYSUDTLIB] 0 parameters (Types: `?`)]]
+- [DB: SYSUDTLIB] 0 parameter]]
         }
     },
     {
@@ -12456,8 +12588,20 @@ return {
             value = [[**ztest_contract**
 
 **Signatures:**
-- [DB: TD_SYSFNLIB] 0 parameters (Types: `?`)]]
+- [DB: TD_SYSFNLIB] 0 parameter]]
+        }
+    },
+    {
+        label = "zeroifnull",
+        sortText = "3_zeroifnull",
+        kind = require("blink.cmp.types").CompletionItemKind.Function,
+        detail = "Scalar Function (1 variant)",
+        documentation = {
+            kind = "markdown",
+            value = [[**zeroifnull**
+
+**Signatures:**
+- 1 parameter (Types: `++`)]]
         }
     }
 }
-

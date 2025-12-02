@@ -36,6 +36,13 @@ function M.get_sql_keywords()
         end
     end
 
+    -- Adding specific `lock row for access`
+    local word = "lock row for access"
+    if not unique_map[word] then
+        unique_map[word] = true
+        table.insert(keywords, word)
+    end
+
     _cached_keywords = keywords
     return keywords
 end
