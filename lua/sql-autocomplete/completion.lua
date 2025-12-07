@@ -105,104 +105,93 @@ function M.complete_manual(findstart)
 end
 
 --- Provides filtered SQL completion items based on the current context and input base.
---- @param findstart number Indicates whether to find the start column (1) or return completion items (0).
---- @param base string The base string to filter completion items.
---- @return number | table Start column or filtered completion items.
-function M.complete_func(findstart, base)
-    if findstart == 1 then
-        local line = vim.api.nvim_get_current_line()
-        local col = vim.api.nvim_win_get_cursor(0)[2]
-        while col > 0 and line:sub(col, col):match('%w') do
-            col = col - 1
+--- @return table Start column or filtered completion items.
+function M.complete_blink()
+    local context = analyze_sql_context()
+
+    local raw_items = {}
+
+    local context_results
+    local context_kind = require("blink.cmp.types").CompletionItemKind.Text
+
+    if context.type == 'columns' then
+        context_kind = require("blink.cmp.types").CompletionItemKind.Field
+        if context.alias_prefix then
+            context.tables = vim.tbl_filter(function(item)
+                return item.alias == string.upper(context.alias_prefix)
+            end, context.tables)
         end
-        return col
-    else
-        local context = analyze_sql_context()
+        context_results = utils.get_columns(context.tables)
+        local candidate_entries
 
-        local raw_items = {}
+        if context.alias_prefix and context.alias_prefix ~= "" then
+            candidate_entries = vim.tbl_filter(function(item)
+                return string.upper(item.alias) == string.upper(context.alias_prefix)
+            end, context.buffer_fields)
+        else
+            candidate_entries = context.buffer_fields
+        end
 
-        local context_results
-        local context_kind = require("blink.cmp.types").CompletionItemKind.Text
-
-        if context.type == 'columns' then
-            context_kind = require("blink.cmp.types").CompletionItemKind.Field
-            if context.alias_prefix then
-                context.tables = vim.tbl_filter(function(item)
-                    return item.alias == string.upper(context.alias_prefix)
-                end, context.tables)
+        local seen_lists = {}
+        local unique_field_lists = {}
+        for _, entry in ipairs(candidate_entries) do
+            local list = entry.field_list
+            if not seen_lists[list] then
+                seen_lists[list] = true
+                table.insert(unique_field_lists, list)
             end
-            context_results = utils.get_columns(context.tables)
-            local candidate_entries
+        end
 
-            if context.alias_prefix and context.alias_prefix ~= "" then
-                candidate_entries = vim.tbl_filter(function(item)
-                    return string.upper(item.alias) == string.upper(context.alias_prefix)
-                end, context.buffer_fields)
-            else
-                candidate_entries = context.buffer_fields
-            end
-
-            local seen_lists = {}
-            local unique_field_lists = {}
-            for _, entry in ipairs(candidate_entries) do
-                local list = entry.field_list
-                if not seen_lists[list] then
-                    seen_lists[list] = true
-                    table.insert(unique_field_lists, list)
+        local seen_fields = {}
+        local final_flat_list = {}
+        for _, list in ipairs(unique_field_lists) do
+            for _, field_name in ipairs(list) do
+                if not seen_fields[field_name] then
+                    seen_fields[field_name] = true
+                    table.insert(final_flat_list, field_name)
                 end
             end
-
-            local seen_fields = {}
-            local final_flat_list = {}
-            for _, list in ipairs(unique_field_lists) do
-                for _, field_name in ipairs(list) do
-                    if not seen_fields[field_name] then
-                        seen_fields[field_name] = true
-                        table.insert(final_flat_list, field_name)
-                    end
-                end
-            end
-
-            context_results = context_results or {}
-            vim.list_extend(context_results, final_flat_list)
-        elseif context.type == 'tables' then
-            context_kind = require("blink.cmp.types").CompletionItemKind.Struct
-            context_results = utils.get_tables(context.db_name)
-        elseif context.type == 'databases' then
-            context_kind = require("blink.cmp.types").CompletionItemKind.Module
-            context_results = utils.get_databases()
-        elseif context.type == 'keywords' then
-            context_kind = require("blink.cmp.types").CompletionItemKind.Keyword
-            context_results = context.candidates
         end
 
         context_results = context_results or {}
-        for _, item_str in ipairs(context_results) do
+        vim.list_extend(context_results, final_flat_list)
+    elseif context.type == 'tables' then
+        context_kind = require("blink.cmp.types").CompletionItemKind.Struct
+        context_results = utils.get_tables(context.db_name)
+    elseif context.type == 'databases' then
+        context_kind = require("blink.cmp.types").CompletionItemKind.Module
+        context_results = utils.get_databases()
+    elseif context.type == 'keywords' then
+        context_kind = require("blink.cmp.types").CompletionItemKind.Keyword
+        context_results = context.candidates
+    end
+
+    context_results = context_results or {}
+    for _, item_str in ipairs(context_results) do
+        table.insert(raw_items, {
+            kind = context_kind,
+            sortText = "1_" .. item_str,
+            label = item_str,
+        })
+    end
+
+    -- If Context is Columns, Inject Keywords and functions with Lower Priority
+    if context.type == 'columns' then
+        local keywords = ts.get_sql_keywords()
+        for _, kw in ipairs(keywords) do
             table.insert(raw_items, {
-                kind = context_kind,
-                sortText = "1_" .. item_str,
-                label = item_str,
+                kind = require("blink.cmp.types").CompletionItemKind.Keyword,
+                sortText = "2_" .. kw,
+                label = kw,
             })
         end
-
-        -- If Context is Columns, Inject Keywords and functions with Lower Priority
-        if context.type == 'columns' then
-            local keywords = ts.get_sql_keywords()
-            for _, kw in ipairs(keywords) do
-                table.insert(raw_items, {
-                    kind = require("blink.cmp.types").CompletionItemKind.Keyword,
-                    sortText = "2_" .. kw,
-                    label = kw,
-                })
-            end
-            local td_functions = require("sql-autocomplete.td_functions_completion")
-            for _, kw in ipairs(td_functions) do
-                table.insert(raw_items, kw)
-            end
+        local td_functions = require("sql-autocomplete.td_functions_completion")
+        for _, kw in ipairs(td_functions) do
+            table.insert(raw_items, kw)
         end
-
-        return raw_items
     end
+
+    return raw_items
 end
 
 --- Inserts selected FZF items into the buffer based on SQL context.
