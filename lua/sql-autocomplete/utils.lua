@@ -1,6 +1,10 @@
 local config = require('sql-autocomplete.config')
 local M = {}
 
+local Schema = {
+    cache = {}
+}
+
 --- Safely removes one or more files.
 --- @param ... string One or more file paths to delete.
 local function remove_files(...)
@@ -13,98 +17,179 @@ end
 
 --- Splits a temporary CSV file into per-database files and generates a summary file.
 --- @return nil
-local function split_data_db_file()
+local function split_data_db_file_to_lua()
     local input_filename = config.options.data_dir .. "/data_tmp.csv"
     local data_files_dir = config.options.data_dir .. "/" .. config.options.data_completion_dir
-    local summary_filename = data_files_dir .. "/data.csv"
+    local summary_filename = data_files_dir .. "/data.lua"
 
-    local file_handles = {}
-    local unique_dbs = {}
+    -- Ensure output directory exists
+    local function ensure_dir(path)
+        if vim.fn.isdirectory(path) == 0 then
+            vim.fn.mkdir(path, "p")
+        end
+    end
+    ensure_dir(data_files_dir)
 
     local input_file = io.open(input_filename, "r")
     if not input_file then
         return vim.notify("Error: Could not open the input file: " .. input_filename, vim.log.levels.ERROR)
     end
 
-    for line in input_file:lines() do
-        local db, rest = line:match("([^,]+),(.*)")
+    -- Helpers
+    local function trim(s) return (s:gsub("^%s+", ""):gsub("%s+$", "")) end
+    local function escape_lua_string(s)
+        s = s:gsub("\\", "\\\\"):gsub('"', '\\"')
+        return s
+    end
+    local function add_unique(list, value)
+        for _, v in ipairs(list) do if v == value then return end end
+        table.insert(list, value)
+    end
+    local function sorted_keys(tbl)
+        local keys = {}
+        for k in pairs(tbl) do table.insert(keys, k) end
+        table.sort(keys)
+        return keys
+    end
 
-        if db and rest then
-            local handle = file_handles[db]
+    -- Accumulators
+    local per_db = {}     -- db -> table -> {columns}
+    local unique_dbs = {} -- db -> true
 
-            if not handle then
-                handle = io.open(data_files_dir .. "/" .. db .. ".csv", "w")
-                file_handles[db] = handle
-                unique_dbs[db] = true
+    -- Parse lines
+    for raw in input_file:lines() do
+        local line = trim(raw or "")
+        if line ~= "" then
+            local parts = {}
+            for token in line:gmatch("([^,]+)") do
+                table.insert(parts, trim(token))
             end
-
-            if handle then
-                handle:write((rest or "") .. "\n")
+            if #parts >= 3 then
+                local db, tbl, col = parts[1], parts[2], parts[3]
+                per_db[db] = per_db[db] or {}
+                per_db[db][tbl] = per_db[db][tbl] or {}
+                add_unique(per_db[db][tbl], col)
+                unique_dbs[db] = true
             else
-                return vim.notify("File handle is nil. Cannot write to file.", vim.log.levels.ERROR)
+                vim.notify("Warning: Malformed line: " .. line, vim.log.levels.WARN)
             end
         end
     end
     input_file:close()
 
-    for _, handle in pairs(file_handles) do
-        handle:close()
+    -- Write per-db files
+    for db_name, tables in pairs(per_db) do
+        local db_filename = data_files_dir .. "/" .. db_name .. ".lua"
+        local is_table = {}
+        table.insert(is_table, "is_table = {")
+        local f = io.open(db_filename, "w")
+        if f then
+            f:write("-- Auto-generated. Do not edit.\n")
+            f:write("return {\n")
+            for _, tname in ipairs(sorted_keys(tables)) do
+                table.insert(is_table, string.format('  ["%s"] = true,', escape_lua_string(tname)))
+                local cols = tables[tname]
+                table.sort(cols)
+                f:write(string.format('  ["%s"] = {', escape_lua_string(tname)))
+                for i, c in ipairs(cols) do
+                    f:write(string.format(' "%s"%s', escape_lua_string(c), i < #cols and "," or ""))
+                end
+                f:write(" },\n")
+            end
+            table.insert(is_table, "}")
+            f:write(table.concat(is_table, "\n"))
+            f:write("}\n")
+            f:close()
+        else
+            vim.notify("Error: Could not write file: " .. db_filename, vim.log.levels.ERROR)
+        end
     end
 
+    -- Write summary file
     local summary_file = io.open(summary_filename, "w")
     if summary_file then
-        for db_name in pairs(unique_dbs) do
-            summary_file:write(db_name .. "\n")
+        summary_file:write("-- Auto-generated. Do not edit.\n")
+        summary_file:write("return {\n")
+        for _, db_name in ipairs(sorted_keys(unique_dbs)) do
+            summary_file:write(string.format('  ["%s"] = true,\n', escape_lua_string(db_name)))
         end
+        summary_file:write("}\n")
         summary_file:close()
     else
-        return vim.notify("Error: Could not open the summary file for writing: " .. summary_filename,
-            vim.log.levels.ERROR)
+        vim.notify("Error: Could not write summary file: " .. summary_filename, vim.log.levels.ERROR)
     end
 end
 
+local function load_databases(summary_file)
+    if not Schema.cache.db then
+        Schema.cache.db = assert(dofile(summary_file))
+    end
+end
 
---- Return true if db_name is a the db files, false otherwise
+--- Return true if db_name is in the db file, false otherwise
 --- @return boolean db_name is present.
 function M.is_a_db(db_name)
     local data_files_dir = config.options.data_dir .. "/" .. config.options.data_completion_dir
-    local db_file = data_files_dir .. "/data.csv"
-    local input_file = io.open(db_file, "r")
-    if not input_file then
-        return false
+    local summary_file = data_files_dir .. "/data.lua"
+    if vim.fn.filereadable(summary_file) == 0 then return false end
+    if not Schema.cache.db then
+        load_databases(summary_file)
     end
-
-    for line in input_file:lines() do
-        if line:lower() == db_name:lower() then
-            return true
-        end
-    end
-
-    return false
+    return Schema.cache.db[db_name:upper()]
 end
 
 --- Retrieves a list of available databases from a summary CSV file.
 --- @return table | nil A list of database names.
 function M.get_databases()
     local data_files_dir = config.options.data_dir .. "/" .. config.options.data_completion_dir
-    local db_file = data_files_dir .. "/data.csv"
-    local input_file = io.open(db_file, "r")
-    if not input_file then
-        -- vim.notify("Error: Could not open the input file: " .. db_file .. "\nBe sure to run TDSync command first",
-        --     vim.log.levels.ERROR)
-        return {}
+    local summary_file = data_files_dir .. "/data.lua"
+    if vim.fn.filereadable(summary_file) == 0 then return nil end
+    if not Schema.cache.db then
+        load_databases(summary_file)
     end
 
     local filter_db = config.options.filter_db
     local databases = {}
-    for line in input_file:lines() do
-        if filter_db == nil or filter_db == ""
-            or string.find(line:lower(), filter_db:lower(), 1, true) then
-            table.insert(databases, line)
+    local want_all = (filter_db == nil) or (filter_db == "")
+    local needle = ""
+    if not want_all then
+        needle = filter_db:upper()
+    end
+
+    for db_name, _ in pairs(Schema.cache.db or {}) do
+        if want_all then
+            table.insert(databases, db_name)
+        else
+            if string.find(db_name:upper(), needle, 1, true) then
+                table.insert(databases, db_name)
+            end
         end
     end
 
     return databases
+end
+
+local function load_tables(db_file, db)
+    if not Schema.cache.tb then
+        Schema.cache.tb = {}
+    end
+    if not Schema.cache.tb[db] then
+        Schema.cache.tb[db] = assert(dofile(db_file))
+    end
+end
+
+--- Return true if db_name is a the db files, false otherwise
+--- @return boolean database + tablename is present.
+function M.is_a_table(database, tablename)
+    local data_files_dir = config.options.data_dir .. "/" .. config.options.data_completion_dir
+    local db = database:gsub("%s+", ""):upper()
+    local tb = tablename:gsub("%s+", ""):upper()
+    local db_file = data_files_dir .. "/" .. db .. ".lua"
+
+    if vim.fn.filereadable(db_file) == 0 then return false end
+
+    load_tables(db_file, db)
+    return Schema.cache.tb[db].is_table[tb]
 end
 
 --- Retrieves a list of unique tables from a database-specific CSV file.
@@ -112,195 +197,63 @@ end
 --- @return table | nil A list of table names.
 function M.get_tables(database)
     local data_files_dir = config.options.data_dir .. "/" .. config.options.data_completion_dir
-    local db_file = data_files_dir .. "/" .. database .. ".csv"
-    local input_file = io.open(db_file, "r")
-    if not input_file then
-        -- vim.notify("Error: Could not open the input file: " .. db_file .. "\nBe sure to run TDSync command first",
-        --     vim.log.levels.ERROR)
-        return {}
-    end
+    local db = database:gsub("%s+", ""):upper()
+    local db_file = data_files_dir .. "/" .. db .. ".lua"
 
-    local unique_tables = {}
+    if vim.fn.filereadable(db_file) == 0 then return nil end
+
+    load_tables(db_file, db)
+
     local tables = {}
-    for line in input_file:lines() do
-        local tb = line:match('([^,]+)')
-        if not unique_tables[tb] then
-            table.insert(tables, tb)
-            unique_tables[tb] = true
-        end
+    for tb, _ in pairs(Schema.cache.tb[db].is_table or {}) do
+        table.insert(tables, tb)
     end
     return tables
 end
 
---- Retrieves a list of unique columns for specified tables in their respective databases.
---- Keeps a synchronous interface, but internally uses libuv worker threads.
---- Each CSV is expected to contain lines like: "table,column"
---- @param table_db_tb table[] list of { db_name = "db", tb_name = "table" }
---- @return table columns unique column names across the requested tables ({} on error)
+--- @return boolean col exists
+function M.is_a_column(database, tablename, columnname)
+    local data_files_dir = config.options.data_dir .. "/" .. config.options.data_completion_dir
+    local db = database:gsub("%s+", ""):upper()
+    local tb = tablename:gsub("%s+", ""):upper()
+    local col = columnname:gsub("%s+", ""):upper()
+    local db_file = data_files_dir .. "/" .. db .. ".lua"
+
+    if vim.fn.filereadable(db_file) == 0 then return false end
+
+    load_tables(db_file, db)
+    for _, c in ipairs(Schema.cache.tb[db][tb] or {}) do
+        if c:upper() == col then
+            return true
+        end
+    end
+    return false
+end
+
 function M.get_columns(table_db_tb)
-    local uv = vim.uv or vim.loop
-
-    -- Resolve base dir on main thread (workers cannot touch 'vim' objects)
-    local data_files_dir = assert(
-        config and config.options and config.options.data_dir, "config.options.data_dir not set"
-    ) .. "/" .. assert(config.options.data_completion_dir, "config.options.data_completion_dir not set")
-
-    -- Group tables by DB file so each CSV is scanned only once
-    local per_db = {} ---@type table<string, {file:string, wanted:table<string,true>}>
+    local data_files_dir = config.options.data_dir .. "/" .. config.options.data_completion_dir
+    local seen = {}
+    local acc = {}
     for _, item in ipairs(table_db_tb or {}) do
         if item and item.db_name and item.tb_name then
-            local file = string.format("%s/%s.csv", data_files_dir, item.db_name)
-            local entry = per_db[file]
-            if not entry then
-                entry = { file = file, wanted = {} }
-                per_db[file] = entry
-            end
-            entry.wanted[item.tb_name] = true
-        end
-    end
+            local db_file = data_files_dir .. "/" .. item.db_name .. ".lua"
 
-    -- Nothing to do
-    local job_payloads = {}
-    for _, entry in pairs(per_db) do
-        -- Build a string payload: "<file>\n<table1>\t<table2>\t..."
-        local tnames = {}
-        for tbname, _ in pairs(entry.wanted) do
-            table.insert(tnames, tbname)
-        end
-        local payload = entry.file .. "\n" .. table.concat(tnames, "\t")
-        table.insert(job_payloads, payload)
-    end
-    if #job_payloads == 0 then
-        return {}
-    end
+            if vim.fn.filereadable(db_file) == 0 then goto continue end
 
-    local acc, seen = {}, {} -- final accumulator on the main thread
-    local pending = #job_payloads
-    local err_msg = nil
+            load_tables(db_file, item.db_name)
 
-
-    local work = uv.new_work(
-    ---@param payload string
-    ---@return string
-        function(payload)
-            ---@cast payload string
-            -- Decode payload: "<file>\n<table1>\t<table2>\t..."
-            local nl = string.find(payload, "\n", 1, true)
-            if not nl then
-                return "ERR\tbad-payload-no-newline"
-            end
-            local file = string.sub(payload, 1, nl - 1)
-            local rest = string.sub(payload, nl + 1)
-
-            -- Build wanted set from tab-separated table names
-            local wanted = {}
-            for name in string.gmatch(rest, "[^\t]+") do
-                wanted[name] = true
-            end
-
-            -- Read file and collect unique columns across the wanted tables
-            local fh = io.open(file, "r")
-            if not fh then
-                return "ERR\tCould not open the input file: " .. file .. "\nBe sure to run TDSync first"
-            end
-
-            local seen_cols = {}
-            local cols = {}
-            for line in fh:lines() do
-                -- Expect "table,column"
-                local tb, field = line:match('([^,]+),([^,]+)')
-                if tb and field and wanted[tb] then
-                    field = field:gsub("%s+$", "")
-                    if not seen_cols[field] then
-                        seen_cols[field] = true
-                        cols[#cols + 1] = field
-                    end
-                end
-            end
-            fh:close()
-
-            -- Marshal result as "OK\t<col1>\t<col2>\t..."
-            return "OK\t" .. table.concat(cols, "\t")
-        end,
-
-        ---@param res string
-        function(res)
-            if err_msg then
-                return
-            end
-            if type(res) ~= "string" or #res == 0 then
-                err_msg = "Worker returned invalid result"
-                return
-            end
-            if res:sub(1, 3) == "ERR" then
-                err_msg = res:sub(5) -- strip "ERR\t"
-                return
-            end
-            -- Merge "OK\t<col1>\t<col2>..." into global unique set
-            local payload = res:sub(4)
-            for col in payload:gmatch("[^\t]+") do
+            for _, col in ipairs(Schema.cache.tb[item.db_name][item.tb_name] or {}) do
                 if col ~= "" and not seen[col] then
                     seen[col] = true
                     table.insert(acc, col)
                 end
             end
-            pending = pending - 1
         end
-    )
-
-    -- Queue jobs (each argument MUST be a string)
-    for _, payload in ipairs(job_payloads) do
-        work:queue(payload)
-    end
-
-    -- Wait synchronously until all jobs done or error (keeps your call style)
-    -- You can tune timeout (ms) if you want; here we allow up to 60s.
-    local ok = vim.wait(60000, function()
-        return pending == 0 or err_msg ~= nil
-    end, 50)
-
-    if not ok and not err_msg then
-        err_msg = "Timeout while collecting columns"
-    end
-
-    if err_msg then
-        return {}
+        ::continue::
     end
 
     return acc
 end
-
--- --- Retrieves a list of unique columns for specified tables in their respective databases.
--- --- @param table_db_tb table A list of tables with associated database names (e.g., { db_name = "db", tb_name = "table" }).
--- --- @return table | nil A list of column names.
--- function M.get_columns(table_db_tb)
---     local data_files_dir = config.options.data_dir .. "/" .. config.options.data_completion_dir
---     local unique_columns = {}
---     local columns = {}
---     for _, item in ipairs(table_db_tb) do
---         local db_file = data_files_dir .. "/" .. item.db_name .. ".csv"
---         local input_file = io.open(db_file, "r")
---         if not input_file then
---             -- vim.notify(
---             --     "Error: Could not open the input file: " .. db_file .. "\nBe sure to run TDSync command first",
---             -- vim.log.levels.ERROR)
---             return {}
---         end
---
---         for line in input_file:lines() do
---             local tb, field = line:match('([^,]+),([^,]+)')
---             if tb == item.tb_name then
---                 field = field:gsub("%s+$", "")
---                 if not unique_columns[field] then
---                     table.insert(columns, field)
---                     unique_columns[field] = true
---                 end
---             end
---         end
---     end
---
---     return columns
--- end
 
 --- Checks if required external commands are executable.
 --- @param commands table A list of command names to check (e.g., {'rg', 'bat'}).
@@ -346,7 +299,7 @@ function M.export_db_data()
         return vim.notify("tbuild command failed : " .. tpt_result, vim.log.levels.ERROR)
     end
 
-    split_data_db_file()
+    split_data_db_file_to_lua()
     remove_files(data_tmp_file)
 end
 
