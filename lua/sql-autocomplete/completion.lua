@@ -1,7 +1,5 @@
 local utils = require('sql-autocomplete.utils')
-local regex = require('sql-autocomplete.regex')
 local ts = require('sql-autocomplete.ts')
-local config = require('sql-autocomplete.config')
 
 local M = {}
 
@@ -11,11 +9,10 @@ local M = {}
 local function analyze_sql_context()
     local context
     local buf = vim.api.nvim_get_current_buf()
-    local completion_mode = config.options.completion_mode
 
     local ok, parser = pcall(vim.treesitter.get_parser, buf, 'sql')
-    if not ok or not parser or completion_mode == 'regex' then
-        context = regex.analyze_sql_context()
+    if not ok or not parser then
+        vim.notify('Could not load sql treesitter parser to enable sql autocompletion', vim.log.levels.INFO)
     else
         context = ts.analyze_sql_context()
     end

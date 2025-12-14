@@ -18,9 +18,6 @@ M.defaults = {
     -- tpt_script
     tpt_script = tpt_script[1],
 
-    -- autocompletion mode : treesitter (default) or regex
-    completion_mode = 'treesitter',
-
     -- pattern to filter result from database autocompletion
     filter_db = nil,
 
