@@ -1,5 +1,7 @@
 # sql-autocomplete
 
+UPDATE : this plugin is now directly integrated into  [vim-teradata](https://github.com/ErwonB/vim-teradata)
+
 Smart SQL autocompletion for Neovim, designed to work seamlessly with Teradata SQL.  
 Part of the [Teradata-Nvim](https://teradata-nvim.com) ecosystem.
 
